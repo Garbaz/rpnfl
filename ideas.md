@@ -278,6 +278,8 @@ splitlines
 
 (Syntax tbd; Maybe the `~>` Syntax used so far for normal variable assignment would make more sense to be used for this, with variable assignment getting a new style of arrow, like e.g. `=>` or `->` or `|>` (??). Alternatively, maybe assignment to a named argument could be with `~`, and `~>` remains as normal variable assignment)
 
+((`~` probably is the best choice here. In most cases, we will likely just have something like `(...)~argument_name`, or rather, the auto-formatter should align things like that. That doesn't look all too bad.))
+
 _Addendum:_
 
 A function's unnamed arguments (which perhaps could be limited to one), could simply be on it's argument stack at the onset of the function body, and additional named arguments can be introduced at any time (either as unmet labels or perhaps with some marker that we are referring to an argument, not a label in the current scope).
@@ -357,6 +359,8 @@ An `enum`-style representation of data is a namespace containing multiple constr
 
 問: How do we handle importing a namespace? In the above example I assume that I can just write the `'nothing` and `'exists` constructors without specifying from which namespace they come from, i.e. I assume implicit importing, which isn't really what we want. But we also probably don't want to write something like `Option.'exists`, or perhaps sugared a bit `'Option.exists` (which is arguably pretty ugly, but allows for stuff like `x'Option.exists`, instead of `x Option.'exists`...).
 
+答: The left-branching-normativity has struck me once more. Instead of writing `Option.'exists`, we could write something like `'exists@Option`. Or we could simply not have a syntax as such, but rather allow to open a Namespace in local scope, i.e. something like `(%Option x'exists)`, with the intended usage being that we open namespaces in a local, but larger scope, instead of referring via Some kind of `A.B.C.d` syntax to functions. Of course we permit renaming as well, to allow for using two conflicting namespaces simultaneously. Maybe we could use the `@` for that instead.
+
 ### Namespaces?
 
 Maybe not a good name, what could we call it instead? A "module"? Though that already has certain connotations from other languages.
@@ -381,6 +385,12 @@ _One option would be:_
 ```
 
 This is relatively clean, however, if there is a lot of code in the branches, then all that keeps things tidy is indentation, which is perhaps not ideal. Also, it isn't visually too clear that these different pattern matches are linked.
+
+反: Instead of thinking of pattern matches as different branches of one match, we could (at least semantically), consider them as guards, i.e., either a value passes a pattern match, going into it's body, or it fails, going past the pattern match.
+
+反反: That will ruin typing though if the body's output does not have the same type as the type we are matching against.
+
+反反反: Polymorphic typing, maybe? That smells like unintended behaviour. Though arguably, there is no difference other than semantics between treating modules as types and having any arbitrary combination of constructors as a type. 
 
 To simply destruct a single `struct`-style constructor:
 
