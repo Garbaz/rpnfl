@@ -324,7 +324,7 @@ A constructor is a function, which instead of returning something, simply wraps 
 A `struct`-style representation of data is a single constructor. To assert that we want a specific constructor (i.e. a certain `struct`) in a type signature, we specify the constructor name. E.g.
 
 ```
-\Float Float Float : 'vec3
+\Float -> Float -> Float : 'vec3
 
 1.0 1.0 0.5 'vec3 ~> 'vec3 : a_3d_vector
 
@@ -357,15 +357,19 @@ An `enum`-style representation of data is a namespace containing multiple constr
 ('nothing default) 0 ~> Int : nothing_also_gives_int
 ```
 
-問: How do we handle importing a namespace? In the above example I assume that I can just write the `'nothing` and `'exists` constructors without specifying from which namespace they come from, i.e. I assume implicit importing, which isn't really what we want. But we also probably don't want to write something like `Option.'exists`, or perhaps sugared a bit `'Option.exists` (which is arguably pretty ugly, but allows for stuff like `x'Option.exists`, instead of `x Option.'exists`...).
+問: How do we handle importing a namespace? In the above example I assume that I can just write the `'nothing` and `'exists` constructors without specifying from which namespace they come from, i.e. I assume implicit importing, which isn't really what we want (looking at you Haskell). But we also probably don't want to write something like `Option.'exists`, or perhaps sugared a bit `'Option.exists` (which is arguably pretty ugly, but allows for stuff like `x'Option.exists`, instead of `x Option.'exists`...).
 
 答: The left-branching-normativity has struck me once more. Instead of writing `Option.'exists`, we could write something like `'exists@Option`. Or we could simply not have a syntax as such, but rather allow to open a Namespace in local scope, i.e. something like `(%Option x'exists)`, with the intended usage being that we open namespaces in a local, but larger scope, instead of referring via Some kind of `A.B.C.d` syntax to functions. Of course we permit renaming as well, to allow for using two conflicting namespaces simultaneously. Maybe we could use the `@` for that instead.
+
+_Addendum:_
+
+It might be that the whole idea of prefixing constructors with `'` isn't so good after all. Instead we could use `'a` as type variables in type signatures, and constructors simply look the same as functions (?). Depends on how unclean it looks in the end to have `'` strewn everywhere.
 
 ### Namespaces?
 
 Maybe not a good name, what could we call it instead? A "module"? Though that already has certain connotations from other languages.
 
-So like in the above example, we want to give type arguments to our namespaces. A namespace's name is part of the type system and can be specified as a type in a type signature, which means that we ask for any constructor that is specified in that namespace.
+As in the above example, we want to give type arguments to our namespaces. A namespace's name is part of the type system and can be specified as a type in a type signature, which means that we ask for any constructor that is specified in that namespace.
 
 _What do we do with sub-namespaces?_
 
@@ -395,7 +399,7 @@ This is relatively clean, however, if there is a lot of code in the branches, th
 To simply destruct a single `struct`-style constructor:
 
 ```
-\'vec3 'vec3 -> 'vec3 : add
+\'vec3 -> 'vec3 -> 'vec3 : add
 {
     | x1 y1 z1 'vec3
     | x2 y2 z2 'vec3
@@ -415,3 +419,53 @@ An if-then-else style of branching can be achieved with:
 ```
 
 Maybe instead if the `|`, something involving the `?` would also be usable.
+
+
+## Combine Boolean and Option
+
+Instead of having separate types for boolean logic and option logic (-> monads), we combine the two into one unified system of logic. E.g.
+
+```
+\a -> a -> a Option : (==)
+{
+    ~> x ~> y
+    x y equal
+    | 'true => x'exists
+    | _     => 'nothing
+}
+
+\a Option -> a Option -> a Option : (&&)
+{
+    ~> x ~> y
+    (x, y)
+    | (_'exists, _'exists) => y'exists
+    | _ => 'nothing
+}
+
+\a Option -> a Option -> a Option : (||)
+{
+    ~> x ~> y
+    (x, y)
+    | (_'exists, _) => x
+    | ('nothing, y'exists) => y
+    | ('nothing, 'nothing) => 'nothing
+}
+
+\a Option -> (a -> b) -> b Option : (??)
+{
+    ~> x ~> f
+    x
+    | v'exists => (v f)'exists
+    | 'nothing => 'nothing
+}
+```
+
+We can combine `??` with `||` to get a ternary operator:
+
+```
+condition ?? (then do this with value) || (else do that)
+```
+
+问: For this ternary operator to make much sense would require lazy evaluation though, otherwise both the "then" and the "else" branch will be evaluated.
+
+答: A wild idea, but maybe we could consider `()` as eagerly evaluated and `{}` as lazily evaluated (??). Not sure if that makes sense, but might be worth a consideration. Or is what I called "escaping" before simply equivalent to lazy evaluation?
