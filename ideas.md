@@ -359,6 +359,10 @@ _Addendum:_
 
 It might be that the whole idea of prefixing constructors with `'` isn't so good after all. Instead we could use `'a` as type variables in type signatures, and constructors simply look the same as functions (?). Depends on how unclean it looks in the end to have `'` strewn everywhere.
 
+_Addendum 2:_
+
+Maybe instead of using `\\` for namespaces, we should use it for constructors?
+
 ### Namespaces?
 
 Maybe not a good name, what could we call it instead? A "module"? Though that already has certain connotations from other languages.
@@ -472,3 +476,33 @@ If we have a function from which we want to return multiple things, we could eit
 Or we could have a built-in operator that transforms a floating tuple into multiple floating values.
 
 More generally, it might make sense to have bespoke operators that allow us to manipulate the argument stack to avoid having to do too much binding, e.g. swapping things around, etc.
+
+## Polymorphisms
+
+Polymorphic functions, i.e. functions that take some arbitrary type parameter (with possibly type-class/trait restrictions) and implement some general code 👍. Same for polymorphic modules & constructors (i.e. enum-style data structures and struct-style data structures) 👍.
+
+Records are simply constructors with named arguments. Do we want row polymorphism for constructors? Should we extend that to functions, i.e. we can specify as an argument's type a function that takes a minimum of certain arguments. What happens to the rest? Curry, but what to? That's nonsense.
+
+
+
+## Function Type Isomorphism
+
+As an explicit opt in perhaps with some operator, we could allow for a function's arguments to be scrambled to fit whatever input is available, e.g.
+
+```
+/// f : Int -> Bool -> String
+
+"hello" 1 @f
+```
+
+_Alternative:_ Instead of making in an operator we put in place at the call location, we could have functions be divided into ordered functions and non ordered functions, with the latter having either be unambiguous about the input types (like `f` above), or be symmetric (like e.g. `+` or `Set::union`). I.e. a non-ordered function can take it's arguments in any order. (<- 👍 _better than operator_)
+
+We could simply do this via type annotation, e.g.:
+
+
+```
+\Int, String -> Bool : f
+\Int; String -> Bool : g
+```
+
+General idea: ordered terms <-> `,` || unordered terms <-> `;` ??? Or some other pair of operators &->> List vs. Map
