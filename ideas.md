@@ -463,3 +463,12 @@ condition ?? (then do this with value) || (else do that)
 问: For this ternary operator to make much sense would require lazy evaluation though, otherwise both the "then" and the "else" branch will be evaluated.
 
 答: A wild idea, but maybe we could consider `()` as eagerly evaluated and `{}` as lazily evaluated (??). Not sure if that makes sense, but might be worth a consideration. Or is what I called "escaping" before simply equivalent to lazy evaluation?
+
+## Currying & Manipulating the argument stack
+
+Functions curry by default, i.e. if in a code block, there are inputs to a function dangling, then they become inputs of the entire code block.
+
+If we have a function from which we want to return multiple things, we could either support simply having multiple results directly, i.e. calling the function will cause multiple floating values to appear. Not sure how clean that would be.\
+Or we could have a built-in operator that transforms a floating tuple into multiple floating values.
+
+More generally, it might make sense to have bespoke operators that allow us to manipulate the argument stack to avoid having to do too much binding, e.g. swapping things around, etc.
