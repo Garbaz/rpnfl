@@ -75,7 +75,7 @@ or maybe to be less spacing sensitive:
 
 or maybe once more reusing `_`:
 
-`param0_type param1_type param2_type \_ result_type` <-- *:thumbs_up:*
+`param0_type param1_type param2_type \_ result_type` <-- 👍
 
 (Maybe `-> result_type` instead?)
 
@@ -499,10 +499,70 @@ _Alternative:_ Instead of making in an operator we put in place at the call loca
 
 We could simply do this via type annotation, e.g.:
 
+```
+\Int; String -> Bool : ordered_func
+\Int, String -> Bool : unordered_func
+```
+
+General idea: ordered terms <-> `;` || unordered terms <-> `,`. Or some other pair of operators &->> List vs. Map
+
+## List, Set, Map ; Tuple, Bunch, Record
+
+A **list** is an unbounded ordered collection of values.
 
 ```
-\Int, String -> Bool : f
-\Int; String -> Bool : g
+[;]
+[x;]
+[x; y; z;]
 ```
 
-General idea: ordered terms <-> `,` || unordered terms <-> `;` ??? Or some other pair of operators &->> List vs. Map
+A **set** is an unbounded unordered collection of values.
+
+```
+[,]
+[x,]
+[x, y, z,]
+```
+
+A **map** is an unbounded unordered collection of value-key pairs.
+
+```
+[=]
+[x=a]
+[x=a, y=b, z=c,]
+```
+
+Analogously for **tuple**/**bunch**/**record**, but with different brackets.
+
+_Question:_
+
+How exactly does e.g. a record type differ from a "namespace type", i.e. an interface / signature. Both a namespace and a record are simply a structure that has labels inside it that refer to certain values (or functions).
+
+-> First class namespaces (really should call these modules or something more descriptive) = records
+
+
+## Big Syntax Shuffle
+
+We prefix a named argument tag with `'`, and that `'` remains part of the name, separating their namespace from the namespace of ordinary variables:
+
+```
+\Int'x , Int'y -> Int : func
+{
+    'x + 'y
+}
+```
+
+Variable & named argument assignment with `=`:
+
+```
+{
+    [1,2,3,4] =l
+    1729 ='x
+}
+```
+
+
+
+### The dot syntax
+
+If we have any kind of namespace (explicit namespace, implicit namespace, record), we can use the `.` to look inside the namespace.
