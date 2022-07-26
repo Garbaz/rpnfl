@@ -487,7 +487,7 @@ Records are simply constructors with named arguments. Do we want row polymorphis
 
 ## Function Type Isomorphism
 
-As an explicit opt in perhaps with some operator, we could allow for a function's arguments to be scrambled to fit whatever input is available, e.g.
+As an explicit opt-in perhaps with some operator, we could allow for a function's arguments to be scrambled to fit whatever input is available, e.g.
 
 ```
 /// f : Int -> Bool -> String
@@ -540,10 +540,17 @@ How exactly does e.g. a record type differ from a "namespace type", i.e. an inte
 
 -> First class namespaces (really should call these modules or something more descriptive) = records
 
+**Wait a second:**
+
+Or aren't records/tuples simply anonymous constructors?!
+
+And isn't a "namespace" (i.e. really a module) also just a record, i.e. a constructor.
+
+Can we unify all these things into one neat syntax?
 
 ## Big Syntax Shuffle
 
-We prefix a named argument tag with `'`, and that `'` remains part of the name, separating their namespace from the namespace of ordinary variables:
+We prefix a (named argument) tag with `'`, and that `'` remains part of the name, separating their namespace from the namespace of variables:
 
 ```
 \Int'x , Int'y -> Int : func
@@ -561,8 +568,35 @@ Variable & named argument assignment with `=`:
 }
 ```
 
-
-
-### The dot syntax
+## The dot syntax
 
 If we have any kind of namespace (explicit namespace, implicit namespace, record), we can use the `.` to look inside the namespace.
+
+## Arguments <=> Tuples+Records
+
+Just as we can uncurry a function taking multiple positional arguments to take a tuple of arguments, we can uncurry a function taking named arguments to take a record of arguments. Same with unordered arguments and bunch.
+
+However, if we allow mixed use of named and unnamed arguments, how do we handle uncurrying such a function?
+
+Would it make sense to unify the static data types (tuple, bunch, record) into one? Or maybe at least combine bunch with record into one ordered data type and bunch with record into one unordered data type?
+
+_Inverse idea:_ Take the current floating value stack and bundle it up into a static data structure. E.g.
+
+```
+1
+2
+3
+4
+*bundle up*
+/// => (1;2;3;4)
+/// or => (1,2,3,4)
+```
+
+or
+
+```
+1 ='a
+2 ='b
+*bundle up*
+/// => (1='a, 2='b)
+```
