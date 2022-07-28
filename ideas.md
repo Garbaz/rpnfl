@@ -570,3 +570,17 @@ or
 *bundle up*
 /// => (1='a, 2='b)
 ```
+
+## Refer to super-scope
+
+Allow to refer to any arbitrary super-scope from any point. This is a superset of recursion (& stuff like `break` in imperative languages). 
+```
+{ $0 } = inf_loop
+{
+    =y
+    | 0 => y
+    | suc x => x y $0 suc
+} = add
+```
+
+_Note:_ This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m?
