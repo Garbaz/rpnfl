@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use dialoguer::{theme::ColorfulTheme, History, Input};
-use scope_lambda::reduce;
+use scope_lambda::reduce::{self, Config};
 
 #[macro_use]
 extern crate lalrpop_util;
@@ -20,9 +20,30 @@ impl History<String> for InputHistory {
     }
 }
 
+fn printhelp() {
+    println!("  Commands:");
+    println!("    ast - Enable/[Disable] prettyprinting AST.");
+    println!("    trace - [Enable]/Disable printing the evaluation trace.");
+    println!("    stack - Enable/[Disable] printing the stack in the evaluation trace.");
+    println!();
+    println!("  Otherwise, simply enter any valid expression to be evaluated.");
+}
+
+fn abled(b: bool) -> String {
+    (if b { "enabled" } else { "disabled" }).to_string()
+}
+
 fn main() {
     let mut prettyprint = false;
     let mut input_hist = InputHistory(VecDeque::new());
+
+    printhelp();
+
+    let mut config = Config {
+        trace: true,
+        stack: false,
+    };
+
     loop {
         let line: String = Input::with_theme(&ColorfulTheme::default())
             .with_prompt("λ")
@@ -30,17 +51,26 @@ fn main() {
             .interact_text()
             .unwrap();
 
-        if line == "@" {
+        if line == "ast" {
             prettyprint = !prettyprint;
-            if prettyprint {
-                println!("Switched to pretty-printing AST");
-            } else {
-                println!("Switched to printing Lambda expression")
-            }
+            println!("Pretty printing AST has been {}", abled(prettyprint));
+        } else if line == "trace" {
+            config.trace = !config.trace;
+            println!(
+                "Printing trace during evaluation has been {}",
+                abled(config.trace)
+            );
+        } else if line == "stack" {
+            config.stack = !config.stack;
+            println!(
+                "Printing stack when printing trace has been {}",
+                abled(config.stack)
+            );
         } else {
             let parse = parse::ExprParser::new().parse(&line);
             if prettyprint {
                 println!("{:#?}", parse);
+                println!();
             } else {
                 match &parse {
                     Ok(l) => println!("{}", l),
@@ -48,8 +78,8 @@ fn main() {
                 }
             }
             if let Ok(l) = parse {
-                if let Some(l) = reduce::reduce(*l) {
-                    println!("=>>\n{}", l);
+                if let Some(l) = reduce::reduce(&config, *l) {
+                    println!("\n==>\n {}", l);
                 }
             }
         }
