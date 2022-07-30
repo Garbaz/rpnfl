@@ -20,5 +20,5 @@ Appl ::= Expr Expr
 
 Identity: `{$0}`
 
-Infinite repeat: `{$0 %0}`
+Infinite loop: `{$0 %0}`
 
