@@ -7,9 +7,9 @@ This is basically just lambda calculus with De Bruijn indexing and built-in recu
 ```ebnf
 Expr ::= Arg | Rec | Abstr | Appl
 
-Arg ::= "$" <NatNum>
+Arg ::= "$" <Number>
 
-Rec ::= "%" <NatNum>
+Rec ::= "%" <Number>
 
 Abstr ::= "{" Expr "}"
 
