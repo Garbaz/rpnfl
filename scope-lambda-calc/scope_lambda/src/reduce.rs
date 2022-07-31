@@ -26,7 +26,6 @@ fn reduce_(config: &Config, mut stack: Vec<Trace>, expr: Expr) -> Option<Expr> {
     match expr {
         Expr::Argument(n) => {
             let Trace { arg, .. } = stack.get(n)?;
-            // println!("{}", arg);
             Some(arg.clone())
         }
         Expr::Recursion(_) => Some(expr),
@@ -37,7 +36,6 @@ fn reduce_(config: &Config, mut stack: Vec<Trace>, expr: Expr) -> Option<Expr> {
                 arg: a,
                 rec: *f.clone(),
             });
-            // println!("{:?}", stack);
             evaluate(config, stack.clone(), *f)
         }
     }
