@@ -18,7 +18,17 @@ Appl ::= Expr Expr
 
 ## Examples
 
-Identity: `{$0}`
+identity: `{$0}`
 
-Infinite loop: `{$0 %0}`
+infinite loop: `{$0 %0}`
+
+true: `{{$0}}`
+
+false: `{{$1}}`
+
+if-then-else: `{{{$1 $2 $0}}}`
+
+## TODO
+
+- Allow for `(`/`)`
 

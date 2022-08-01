@@ -583,4 +583,25 @@ Allow to refer to any arbitrary super-scope from any point. This is a superset o
 } = add
 ```
 
-_Note:_ This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m?
+_Note:_ This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m? (目[scope-lambda-calc](/scope-lambda-calc))
+
+## Constants as functions
+
+Would it make sense to consider e.g. `7` a function? It takes no arguments and returns a certain `Int`. Or perhaps an infinite sequence of identical `Int`s?
+
+## A clean way to handle multiple results
+
+There are situations, especially in pure functional programming, that we want to return multiple values as our result. However, often times these results are not of equal utility. Rather, we might want to return the actual result we wanted to achieve, together with some metadata that we need for recursion or for some meta use like logging. However, generally there is no clean way to separate this main result from our meta results, especially not in a way where we can simply act as if the meta results do not exist for most purposes and then access them when actually needed.
+
+How about, just like with ordered/unordered/named arguments, we have ordered/unordered/named return values?
+
+Something where we can pick out the return values that we care about and ignore the rest (for later, or completely), as long as it is unambiguous.
+
+How does this interact with the arguments to a function? 
+
+
+## Consider tuple/bunch/record as equivalent to each other and to function arguments
+
+Could we, at least in an opt-in manner, act as if we are simply handing around tuples/bunches/records, or rather even a common fixed-size collection type, instead of having a separate but equivalent semantic for these collections and the arguments (^and perhaps results) of functions?
+
+Also, introduce a semantic for tuples/bunches/records being coercible, i.e. we can always consider a collection that has more as one that has less.
