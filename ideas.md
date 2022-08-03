@@ -605,3 +605,5 @@ How does this interact with the arguments to a function?
 Could we, at least in an opt-in manner, act as if we are simply handing around tuples/bunches/records, or rather even a common fixed-size collection type, instead of having a separate but equivalent semantic for these collections and the arguments (^and perhaps results) of functions?
 
 Also, introduce a semantic for tuples/bunches/records being coercible, i.e. we can always consider a collection that has more as one that has less.
+
+_Idea:_ How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator.
