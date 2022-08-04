@@ -674,3 +674,15 @@ It makes sense for modules and functions/constructors to have the type annotatio
 blorbo =x 
 blarf  = Int -> Int : y /// This doesn't look very sexy
 ```
+
+## Dealing with missing type class implementations
+
+A situation that comes up in languages that use type classes like Rust or Haskell, is that we have some external type that we want to use, and some external type class that we want that type to fulfil for some usage, but the creator of that type did not implement that type class. Especially when the implementation we seek is simply the derived one, this can be frustrating. How can we do this better?
+
+Would it make sense to introduce some way that allows us either generally define the implementation of an external type class for an external type? This is something Rust explicitly forbids, likely for good reason.
+
+Alternatively, would it make sense to at least allow us to ask the compiler "on the fly" to use the derived implementation of a type class for a type, if possible?
+
+## Type classes
+
+From ^, I notice we don't have a syntax for declaring a type class. Would it make sense to use `\\` for a type class instead of for a module? What is a type class really for the purposes of this language?
