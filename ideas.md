@@ -2,6 +2,7 @@
 
 (耳192, )
 
+
 ## Values
 
 At any point in the program, can have a floating value, e.g.
@@ -18,15 +19,18 @@ We have four options as to what to do with it:
 - _Stack it_: It will not become an argument to the next function, but ???
 - _Discard it_: It will not became an argument to any function (this can be simply seen as stuffing with `~> _`)
 
+
 ## Identical syntax for types and data
 
 Perhaps we can consider a function (i.e. label) declaration to be analogous or even logically identical to function invocation??
+
 
 ## Allow `_` wherever we can
 
 A `_` can stand in for any position we might put a label, but we are in the given context not required to do so for successful compilation.
 
 Alternatively, we could consider building the syntax such that any label is optional (though I'm not sure whether that would be pretty).
+
 
 ## Function definition
 
@@ -45,6 +49,7 @@ or maybe once more reusing `_`:
 `param0_type param1_type param2_type \_ result_type` <-- 👍
 
 (Maybe `-> result_type` instead?)
+
 
 ## Function invocation
 
@@ -94,6 +99,7 @@ Int:x Int:y \subr -> Int
 }
 ```
 
+
 ## Scope
 
 Allow opening a new local scope at any time in some manner. Like `let ... in ...` in OCaml.
@@ -101,6 +107,7 @@ Allow opening a new local scope at any time in some manner. Like `let ... in ...
 An option would be to consider `()` and `{}` as equivalent, with the distinction being that the latter opens a new local scope inside it, whereas the former does not. If we then also permit for a scope to be named, we would have namespaces covered as well. Naming of scopes could perhaps be aligned or even joined with function syntax (?).
 
 _Question:_ Do we even need brackets that do not introduce a new local scope? Could we consider `()` as simply always introducing local scope, and leave `{}` for something else?
+
 
 ## Insert meta meaning into syntactic grammar
 
@@ -112,6 +119,7 @@ And enforce these during compilation, and not just as coding guidelines.
 _Alternative:_
 
 Since the labels on the type level and the labels on the value level don't really interact (are the namespaces perhaps even completely separate?), we can probably reuse what different syntactic grammar means between the two situations.
+
 
 ## Match case anywhere
 
@@ -133,11 +141,13 @@ print
 
 (Syntax tbd, maybe something in the style of the ternary operator?)
 
+
 ## Mark exception-throwing / maybe-returning function
 
 A function that can throw a runtime exception is marked with a `!` at the end of it's label (?) and a function that returns a `Maybe` is marked with a `?` at the end of it's label (???).
 
 Alternatively, we could include information about a function potentially throwing a runtime exception in the function's type signature (return type?).
+
 
 ## Type tags
 
@@ -155,6 +165,7 @@ critical : a, (!excpt) b => (a -> b) -> b
 
 問題: This is in a way similar or the opposite of constructors, we keep track of where our value came from, but contrary to constructors, we can still access the contained value, and don't have to wrapped in the constructor.
 
+
 ## Traits/Classes
 
 If it's a good idea, why not just steal it?
@@ -163,9 +174,11 @@ Define a type category that requires certain functions to exist for a type, and 
 
 (Syntax tbd)
 
+
 ## Uniform use of symbols
 
 Reuse of symbols should correspond with similarity of concepts. For example, we should not reuse `{}` for e.g. sets, if it is used for declaring a code block.
+
 
 ## How to chain multiple inputs
 
@@ -176,6 +189,7 @@ Reuse of symbols should correspond with similarity of concepts. For example, we 
     concat
 }
 ```
+
 
 ## How do we treat a label existing
 
@@ -197,9 +211,11 @@ means that we expect some input, and give as `String` as output.
 
 means that we expect no input, and give a `a -> String` as output. 
 
+
 ## Monad / Applicative
 
 Some of the ideas pursued here are similar to the concepts behind the Monad..
+
 
 ## Constructor annotation
 
@@ -225,6 +241,7 @@ t :: Time = 18'hours + 30'minutes + 10'seconds
 
 _Alternative:_ Introduce prefix `'` as simply indicating a function to be higher binding than anything that does not have the prefix, i.e. in the above example `hours` etc. are simply ordinary functions, which normally would bind lower than `+`, but by prefixing them with `'`, we are able to write them without the need for brackets. However, this already is the default behaviour in languages like Haskell, where a prefix function binds stronger than an infix function. Will it be the same here? In which case, we could just enforce that all constructors start with `'`, which would also align with the idea of _[Insert meta meaning into syntactic grammar](#insert-meta-meaning-into-syntactic-grammar)_.
 
+
 ## (Named) arguments
 
 A function can take named arguments (which can be either mandatory or optional), which are assigned in an equivalent manner to variables, but do not share a namespace to prevent accidentally passing unindented optional arguments to a function.
@@ -247,15 +264,18 @@ A function's unnamed arguments (which perhaps could be limited to one), could si
 
 In terms of inferring the type of a function, this would permit us to simply consider as it's arguments any unmet inputs, and any named arguments that are introduced throughout the function body. We would not have to specify a signature providing names and types for arguments unless desired (and perhaps needed in some edge-cases).
 
+
 ## Constructors and functions
 
 The only difference between a constructor (in the Rust->enum sense) and a function is that for the former we remember where we came from, whereas for the latter we do not. And with constructors we commonly unify multiple of them under a type, knowing always that if that type appears, it has to have come from one of these constructors.
 
 What even is the difference between a namespace and a GADT?
 
+
 ## Escaping / Bracket evaluation
 
 How about `()` is evaluated, i.e. it's contents are executed upon being encountered and it's value is the result of this execution, whereas `{}` is not executed upon being encountered, and it's value is the function the block stands for.
+
 
 ## Forward and backward solving
 
@@ -271,9 +291,11 @@ _More ideas for IDE features:_
 
 - Highlight somehow which arguments end up as inputs to which functions.
 
-#### 目:
+
+### 目:
 
 - https://www.youtube.com/watch?v=UkDSL0U9ndQ
+
 
 ## Namespaces, types and constructors
 
@@ -333,6 +355,7 @@ _Addendum 2:_
 
 Maybe instead of using `\\` for namespaces, we should use it for constructors?
 
+
 ### Namespaces?
 
 Maybe not a good name, what could we call it instead? A "module"? Though that already has certain connotations from other languages.
@@ -342,6 +365,7 @@ As in the above example, we want to give type arguments to our namespaces. A nam
 _What do we do with sub-namespaces?_
 
 Perhaps it would make sense to allow both, either permitting only constructors defined in the namespace itself (default), e.g. `A -> A : function`, or also allow any sub-namespaces, e.g. `A* -> A* : function`.
+
 
 ## Pattern matching
 
@@ -438,6 +462,7 @@ condition ?? (then do this with value) || (else do that)
 
 答: A wild idea, but maybe we could consider `()` as eagerly evaluated and `{}` as lazily evaluated (??). Not sure if that makes sense, but might be worth a consideration. Or is what I called "escaping" before simply equivalent to lazy evaluation?
 
+
 ## Currying & Manipulating the argument stack
 
 Functions curry by default, i.e. if in a code block, there are inputs to a function dangling, then they become inputs of the entire code block.
@@ -447,12 +472,12 @@ Or we could have a built-in operator that transforms a floating tuple into multi
 
 More generally, it might make sense to have bespoke operators that allow us to manipulate the argument stack to avoid having to do too much binding, e.g. swapping things around, etc.
 
+
 ## Polymorphisms
 
 Polymorphic functions, i.e. functions that take some arbitrary type parameter (with possibly type-class/trait restrictions) and implement some general code 👍. Same for polymorphic modules & constructors (i.e. enum-style data structures and struct-style data structures) 👍.
 
 Records are simply constructors with named arguments. Do we want row polymorphism for constructors? Should we extend that to functions, i.e. we can specify as an argument's type a function that takes a minimum of certain arguments. What happens to the rest? Curry, but what to? That's nonsense.
-
 
 
 ## Function Type Isomorphism
@@ -475,6 +500,7 @@ We could simply do this via type annotation, e.g.:
 ```
 
 General idea: ordered terms <-> `;` || unordered terms <-> `,`. Or some other pair of operators &->> List vs. Map
+
 
 ## List, Set, Map ; Tuple, Bunch, Record
 
@@ -518,6 +544,7 @@ And isn't a "namespace" (i.e. really a module) also just a record, i.e. a constr
 
 Can we unify all these things into one neat syntax?
 
+
 ## Big Syntax Shuffle
 
 We prefix a (named argument) tag with `'`, and that `'` remains part of the name, separating their namespace from the namespace of variables:
@@ -538,9 +565,11 @@ Variable & named argument assignment with `=`:
 }
 ```
 
+
 ## The dot syntax
 
 If we have any kind of namespace (explicit namespace, implicit namespace, record), we can use the `.` to look inside the namespace.
+
 
 ## Arguments <=> Tuples+Records
 
@@ -571,6 +600,7 @@ or
 /// => (1='a, 2='b)
 ```
 
+
 ## Refer to super-scope
 
 Allow to refer to any arbitrary super-scope from any point. This is a superset of recursion (& stuff like `break` in imperative languages). 
@@ -585,9 +615,15 @@ Allow to refer to any arbitrary super-scope from any point. This is a superset o
 
 _Note:_ This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m? (目[scope-lambda-calc](/scope-lambda-calc))
 
+
 ## Constants as functions
 
 Would it make sense to consider e.g. `7` a function? It takes no arguments and returns a certain `Int`. Or perhaps an infinite sequence of identical `Int`s?
+
+Or even allow numerals to be polymorphic functions, e.g. to use `0` or `1` also in other situations (probably not pretty)?
+
+It would make more sense to rather consider numerals as a special case of constructors.
+
 
 ## A clean way to handle multiple results
 
@@ -597,8 +633,29 @@ How about, just like with ordered/unordered/named arguments, we have ordered/uno
 
 Something where we can pick out the return values that we care about and ignore the rest (for later, or completely), as long as it is unambiguous.
 
-How does this interact with the arguments to a function? 
+How does this interact with the arguments to a function?
 
+Why shouldn't we just be able to write a function like this:
+
+```
+\Int'x -> Int , Bool : f
+{
+    'x even
+    'x + 1
+}
+```
+
+I.e. everything that get's left hanging around at the end of our function becomes a result? And for ordered, maybe like this:
+
+```
+\Int'x -> Int ; Bool : g
+{
+    'x + 1 ;
+    'x even
+}
+```
+
+Though what happens when we call a function like this to the value stack? Are they just pushed on in order? Then what's the difference between having ordered and unordered results?
 
 ## Consider tuple/bunch/record as equivalent to each other and to function arguments
 
@@ -607,3 +664,13 @@ Could we, at least in an opt-in manner, act as if we are simply handing around t
 Also, introduce a semantic for tuples/bunches/records being coercible, i.e. we can always consider a collection that has more as one that has less.
 
 _Idea:_ How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator.
+
+
+## Type annotation for variables
+
+It makes sense for modules and functions/constructors to have the type annotation on the left, since there is where the arguments will appear later, but how do we do type annotation for variables? Do we even need the option, or can we just assume that we always can infer the type?
+
+```
+blorbo =x 
+blarf  = Int -> Int : y /// This doesn't look very sexy
+```
