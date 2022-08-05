@@ -1,10 +1,22 @@
 # Compiler
 
-#### 目:
+## 目:
+
+### Parsing
 
 - https://www.youtube.com/watch?v=vzfy4EKwG_Y
 - https://www.youtube.com/watch?v=Jes3bD6P0To
+- 
+
+### Compiling
+
+- https://www.youtube.com/watch?v=vzfy4EKwG_Y
+- https://en.wikipedia.org/wiki/Semantics_(computer_science)#Approaches
+
+### Type system
+
 - https://en.wikipedia.org/wiki/Substructural_type_system#Linear_type_systems
+- https://pdfs.semanticscholar.org/01b5/1c8ebe7f7fc21878c9500e03ab77324172dd.pdf
 - 
 
 ## Ideas

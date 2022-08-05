@@ -706,3 +706,8 @@ Instead, I would rather implement general sensible rules that specify operator p
 - Bespoke precedence for built-ins (Or maybe not? Like, how often is it really an annoyance to have to bracket e.g. `a + b * c` as `a + (b * c)`. Might that actually be helpful to reduce mistakes?)
 
 Though the question remains how we would allow for permitting both left and right associative operators. Just enforce one? Make it depend on the operator or it's function somehow?
+
+## Monadic IO
+
+目: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/mark.pdf
+
