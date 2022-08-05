@@ -9,3 +9,14 @@
 
 ## Ideas
 
+### Configuration
+
+```sh
+compiler-name configure
+```
+
+Instead of requiring the user to specify configurations to the compiler as command line arguments or a configuration file, we provide an interactive configuration tool. This will generate/update a suitable configuration file for the current project or globally, depending on from where we start the configuration (or `--global`).
+
+_As a more general principle:_ Provide an isomorphic but not equal interface for things for the user and the computer, instead of trying to find a format that suits both the user and the computer. If needed, the user can still edit configuration manually, but they should not have to.
+
+This could build upon the bigger idea of having UI/file formats that are derived from the structure of data, instead of being constructed manually. We should not have to manually maintain a user interface and a config parser for the data structure that represents our compiler configuration. Instead, they should be derivable by some general principles.

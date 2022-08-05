@@ -686,3 +686,23 @@ Alternatively, would it make sense to at least allow us to ask the compiler "on 
 ## Type classes
 
 From ^, I notice we don't have a syntax for declaring a type class. Would it make sense to use `\\` for a type class instead of for a module? What is a type class really for the purposes of this language?
+
+## Do notation
+
+Haskell provides a nice `do ...` notation for working with monads. This is very similar to how code looks like here. Could we provide perhaps an extension to our syntax like `#{...}` that causes the code block to automatically handle monads? So we can effectively write the same code, but instead of function composition, we have monad composition. Or can we make this even more general? Or as a macro instead of bespoke?
+
+## Infix operator precedence
+
+Assuming we do allow arbitrary custom defined infix operators, one option would be to allow providing their precedence and association somehow in the code. I would argue against this option, since
+
+1: This would mean that our source code would suddenly talk back to the parser, which I find quite ugly
+
+2: While operator precedence is well known for common mathematical operators, when custom operators are combined, if we do not bracket the expressions, the interpretation of the code by the user becomes unclear.
+
+Instead, I would rather implement general sensible rules that specify operator precedence across the language. Ideas for that would be:
+
+- Infix operators over functions, e.g. `x f <|> y g` should be parsed as `(x f) <|> (y g)`
+- Long operator over short operator, e.g. `a + b <|> c` should be parsed as `(a + b) <|> c`, since `<|>` consists of 3 characters, whereas `+` only of 1 (How would this interplay with standard infix operators? What about something like `a + b // c`, where `//` is supposed to be cast-down-division?)
+- Bespoke precedence for built-ins (Or maybe not? Like, how often is it really an annoyance to have to bracket e.g. `a + b * c` as `a + (b * c)`. Might that actually be helpful to reduce mistakes?)
+
+Though the question remains how we would allow for permitting both left and right associative operators. Just enforce one? Make it depend on the operator or it's function somehow?
