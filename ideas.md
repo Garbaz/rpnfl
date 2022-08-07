@@ -711,3 +711,14 @@ Though the question remains how we would allow for permitting both left and righ
 
 目: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/mark.pdf
 
+## Variants, once more
+
+How about:
+
+Everything is functions. A constructor is a function that does not compute, but simply encapsulates it's arguments. A sum (/variant/enum) type is a set of constructors. For type inference / checking, this would mean that we have to simply figure out the set of constructors that a certain argument or result might be.
+
+_Alternative:_ Can we generalize to "A type is either a constructor, or a set of types"? (What for though?)
+
+## First class functors / monads
+
+Not sure entirely what this would entail. Vaguely: Make working with them as convenient as possible.
