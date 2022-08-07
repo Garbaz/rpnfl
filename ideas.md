@@ -683,13 +683,21 @@ Would it make sense to introduce some way that allows us either generally define
 
 Alternatively, would it make sense to at least allow us to ask the compiler "on the fly" to use the derived implementation of a type class for a type, if possible?
 
+
 ## Type classes
 
 From ^, I notice we don't have a syntax for declaring a type class. Would it make sense to use `\\` for a type class instead of for a module? What is a type class really for the purposes of this language?
 
+
 ## Do notation
 
 Haskell provides a nice `do ...` notation for working with monads. This is very similar to how code looks like here. Could we provide perhaps an extension to our syntax like `#{...}` that causes the code block to automatically handle monads? So we can effectively write the same code, but instead of function composition, we have monad composition. Or can we make this even more general? Or as a macro instead of bespoke?
+
+
+## First class functors / monads
+
+Not sure entirely what this would entail. Vaguely: Make working with them as convenient as possible.
+
 
 ## Infix operator precedence
 
@@ -707,9 +715,11 @@ Instead, I would rather implement general sensible rules that specify operator p
 
 Though the question remains how we would allow for permitting both left and right associative operators. Just enforce one? Make it depend on the operator or it's function somehow?
 
+
 ## Monadic IO
 
 目: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/mark.pdf
+
 
 ## Variants, once more
 
@@ -717,8 +727,10 @@ How about:
 
 Everything is functions. A constructor is a function that does not compute, but simply encapsulates it's arguments. A sum (/variant/enum) type is a set of constructors. For type inference / checking, this would mean that we have to simply figure out the set of constructors that a certain argument or result might be.
 
+This might be utilizable for optimization (you don't need to compile a code path for a constructor of a variant that never is used), or directly in the semantics of the program. A module as a type simply is a convenient shorthand for the set of constructors it contains. 
+
 _Alternative:_ Can we generalize to "A type is either a constructor, or a set of types"? (What for though?)
 
-## First class functors / monads
+## Differentiate ordered / unordered by brackets
 
-Not sure entirely what this would entail. Vaguely: Make working with them as convenient as possible.
+Code is an ordered collection of functions. A module is an unordered collection of functions. Should they be differentiated by brackets? However, which? `{}` are cool for either, but neither `()` nor `[]` really look great if opened over an entire block like `{}`...
