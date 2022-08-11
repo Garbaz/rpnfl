@@ -88,7 +88,7 @@ is a function that is awaiting one function as an argument.
 
 (syntax TBD)
 
-_Addendum:_
+加:
 
 As part of a functions type annotation we can give arguments names, so that we can introduce them in the function body at an arbitrary location, instead of in order.
 
@@ -106,7 +106,7 @@ Allow opening a new local scope at any time in some manner. Like `let ... in ...
 
 An option would be to consider `()` and `{}` as equivalent, with the distinction being that the latter opens a new local scope inside it, whereas the former does not. If we then also permit for a scope to be named, we would have namespaces covered as well. Naming of scopes could perhaps be aligned or even joined with function syntax (?).
 
-_Question:_ Do we even need brackets that do not introduce a new local scope? Could we consider `()` as simply always introducing local scope, and leave `{}` for something else?
+问: Do we even need brackets that do not introduce a new local scope? Could we consider `()` as simply always introducing local scope, and leave `{}` for something else?
 
 
 ## Insert meta meaning into syntactic grammar
@@ -116,9 +116,7 @@ _Question:_ Do we even need brackets that do not introduce a new local scope? Co
 
 And enforce these during compilation, and not just as coding guidelines.
 
-_Alternative:_
-
-Since the labels on the type level and the labels on the value level don't really interact (are the namespaces perhaps even completely separate?), we can probably reuse what different syntactic grammar means between the two situations.
+另: Since the labels on the type level and the labels on the value level don't really interact (are the namespaces perhaps even completely separate?), we can probably reuse what different syntactic grammar means between the two situations.
 
 
 ## Match case anywhere
@@ -127,7 +125,7 @@ The way the `with` syntax works in Agda could in our case simply be possible at 
 
 Wait, can't we just integrate this with anonymous functions? Do we want pattern matching to be an operator or part of the function construction?
 
-Something like:
+_Something like:_
 
 ```
 [4,3,2,1]
@@ -239,7 +237,7 @@ x :: Int Option = 17'exists
 t :: Time = 18'hours + 30'minutes + 10'seconds
 ```
 
-_Alternative:_ Introduce prefix `'` as simply indicating a function to be higher binding than anything that does not have the prefix, i.e. in the above example `hours` etc. are simply ordinary functions, which normally would bind lower than `+`, but by prefixing them with `'`, we are able to write them without the need for brackets. However, this already is the default behaviour in languages like Haskell, where a prefix function binds stronger than an infix function. Will it be the same here? In which case, we could just enforce that all constructors start with `'`, which would also align with the idea of _[Insert meta meaning into syntactic grammar](#insert-meta-meaning-into-syntactic-grammar)_.
+另: Introduce prefix `'` as simply indicating a function to be higher binding than anything that does not have the prefix, i.e. in the above example `hours` etc. are simply ordinary functions, which normally would bind lower than `+`, but by prefixing them with `'`, we are able to write them without the need for brackets. However, this already is the default behaviour in languages like Haskell, where a prefix function binds stronger than an infix function. Will it be the same here? In which case, we could just enforce that all constructors start with `'`, which would also align with the idea of _[Insert meta meaning into syntactic grammar](#insert-meta-meaning-into-syntactic-grammar)_.
 
 
 ## (Named) arguments
@@ -258,7 +256,7 @@ splitlines
 
 ((`~` probably is the best choice here. In most cases, we will likely just have something like `(...)~argument_name`, or rather, the auto-formatter should align things like that. That doesn't look all too bad.))
 
-_Addendum:_
+加:
 
 A function's unnamed arguments (which perhaps could be limited to one), could simply be on it's argument stack at the onset of the function body, and additional named arguments can be introduced at any time (either as unmet labels or perhaps with some marker that we are referring to an argument, not a label in the current scope).
 
@@ -287,7 +285,7 @@ This structure of information can also be interesting in explorative code genera
 
 Under ideal circumstances, the programmer's workflow should consist mostly of having to pick the correct function from a provided few that match the current argument stack, and only really have to provide any introductions (i.e. Pulling something out of the hat, like a constant or new function definition). Though it has to be considered that if we make extensive use of named arguments the default, that this wouldn't work as well, or rather, we should probably ignore named arguments (that are not present) for autocomplete, and perhaps dynamically introduce them for the programmer upon them picking a function (問: How much would this widen the search/result space and impact practicability?)
 
-_More ideas for IDE features:_
+More ideas for IDE features:
 
 - Highlight somehow which arguments end up as inputs to which functions.
 
@@ -347,11 +345,11 @@ An `enum`-style representation of data is a namespace containing multiple constr
 
 答: The left-branching-normativity has struck me once more. Instead of writing `Option.'exists`, we could write something like `'exists@Option`. Or we could simply not have a syntax as such, but rather allow to open a Namespace in local scope, i.e. something like `(%Option x'exists)`, with the intended usage being that we open namespaces in a local, but larger scope, instead of referring via Some kind of `A.B.C.d` syntax to functions. Of course we permit renaming as well, to allow for using two conflicting namespaces simultaneously. Maybe we could use the `@` for that instead.
 
-_Addendum:_
+Addendum:
 
 It might be that the whole idea of prefixing constructors with `'` isn't so good after all. Instead we could use `'a` as type variables in type signatures, and constructors simply look the same as functions (?). Depends on how unclean it looks in the end to have `'` strewn everywhere.
 
-_Addendum 2:_
+Addendum 2:
 
 Maybe instead of using `\\` for namespaces, we should use it for constructors?
 
@@ -371,7 +369,7 @@ Perhaps it would make sense to allow both, either permitting only constructors d
 
 To destruct constructed values and to differentiate between different possible inputs (-> `enum`-style use of namespaces), we want to we able to pattern match on a value. What would be a clean syntax for this?
 
-_One option would be:_
+One option would be:
 
 ```
 {
@@ -490,7 +488,7 @@ As an explicit opt-in perhaps with some operator, we could allow for a function'
 "hello" 1 @f
 ```
 
-_Alternative:_ Instead of making in an operator we put in place at the call location, we could have functions be divided into ordered functions and non ordered functions, with the latter having either be unambiguous about the input types (like `f` above), or be symmetric (like e.g. `+` or `Set::union`). I.e. a non-ordered function can take it's arguments in any order. (<- 👍 _better than operator_)
+Alternative: Instead of making in an operator we put in place at the call location, we could have functions be divided into ordered functions and non ordered functions, with the latter having either be unambiguous about the input types (like `f` above), or be symmetric (like e.g. `+` or `Set::union`). I.e. a non-ordered function can take it's arguments in any order. (<- 👍 _better than operator_)
 
 We could simply do this via type annotation, e.g.:
 
@@ -499,7 +497,7 @@ We could simply do this via type annotation, e.g.:
 \Int, String -> Bool : unordered_func
 ```
 
-General idea: ordered terms <-> `;` || unordered terms <-> `,`. Or some other pair of operators &->> List vs. Map
+_General idea:_ ordered terms <-> `;` || unordered terms <-> `,`. Or some other pair of operators &->> List vs. Map
 
 
 ## List, Set, Map ; Tuple, Bunch, Record
@@ -530,7 +528,7 @@ A **map** is an unbounded unordered collection of value-key pairs.
 
 Analogously for **tuple**/**bunch**/**record**, but with different brackets.
 
-_Question:_
+问:
 
 How exactly does e.g. a record type differ from a "namespace type", i.e. an interface / signature. Both a namespace and a record are simply a structure that has labels inside it that refer to certain values (or functions).
 
@@ -613,7 +611,7 @@ Allow to refer to any arbitrary super-scope from any point. This is a superset o
 } = add
 ```
 
-_Note:_ This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m? (目[scope-lambda-calc](/scope-lambda-calc))
+观: This is probably not a good feature for this language, but maybe interesting to explore in itself. Maybe something like: A lambda calculus-style minimal programming language where $n refers to super-scopes and %n to arguments. to the current scope. Or perhaps rather we refer the m-th argument of the n-th scope with $n.m? (目[scope-lambda-calc](/scope-lambda-calc))
 
 
 ## Constants as functions
@@ -663,7 +661,7 @@ Could we, at least in an opt-in manner, act as if we are simply handing around t
 
 Also, introduce a semantic for tuples/bunches/records being coercible, i.e. we can always consider a collection that has more as one that has less.
 
-_Idea:_ How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator.
+议: How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator.
 
 
 ## Type annotation for variables
@@ -703,9 +701,9 @@ Not sure entirely what this would entail. Vaguely: Make working with them as con
 
 Assuming we do allow arbitrary custom defined infix operators, one option would be to allow providing their precedence and association somehow in the code. I would argue against this option, since
 
-1: This would mean that our source code would suddenly talk back to the parser, which I find quite ugly
+_1:_ This would mean that our source code would suddenly talk back to the parser, which I find quite ugly
 
-2: While operator precedence is well known for common mathematical operators, when custom operators are combined, if we do not bracket the expressions, the interpretation of the code by the user becomes unclear.
+_2:_ While operator precedence is well known for common mathematical operators, when custom operators are combined, if we do not bracket the expressions, the interpretation of the code by the user becomes unclear.
 
 Instead, I would rather implement general sensible rules that specify operator precedence across the language. Ideas for that would be:
 
@@ -723,14 +721,81 @@ Though the question remains how we would allow for permitting both left and righ
 
 ## Variants, once more
 
-How about:
-
-Everything is functions. A constructor is a function that does not compute, but simply encapsulates it's arguments. A sum (/variant/enum) type is a set of constructors. For type inference / checking, this would mean that we have to simply figure out the set of constructors that a certain argument or result might be.
+议: Everything is functions. A constructor is a function that does not compute, but simply encapsulates it's arguments. A sum (/variant/enum) type is a set of constructors. For type inference / checking, this would mean that we have to simply figure out the set of constructors that a certain argument or result might be.
 
 This might be utilizable for optimization (you don't need to compile a code path for a constructor of a variant that never is used), or directly in the semantics of the program. A module as a type simply is a convenient shorthand for the set of constructors it contains. 
 
-_Alternative:_ Can we generalize to "A type is either a constructor, or a set of types"? (What for though?)
+另: Can we generalize to "A type is either a constructor, or a set of types"? (What for though?)
 
 ## Differentiate ordered / unordered by brackets
 
 Code is an ordered collection of functions. A module is an unordered collection of functions. Should they be differentiated by brackets? However, which? `{}` are cool for either, but neither `()` nor `[]` really look great if opened over an entire block like `{}`...
+
+
+## Alternative syntaxes for function
+
+```
+eq = \Int; Int -> Bool
+///or
+\eq : Int; Int -> Bool
+```
+
+In a syntax like `Int'x -> Int , Bool : f`, the function name being at the end might not be great for general usability. When we are in search of a specific function by name, it is visually difficult to always have to find the end of each function signature. And it just semantically is generally the case that if we define a named function, it is the function name that we have in mind as it's primary identifier.
+
+反: This however does break analogy to the application of a function, e.g. `\eq : Int, Int -> Bool` is applied like `0 1 eq`.
+
+## Considerations about constructors/variants
+
+A constructor in essence describes either the definition of an atomic thing, or more generally a thing that is made of other things. Notably, a constructor therefore always represents a thing, not an action. In alignment to the practice observed in e.g. the grammar of the natural language German, we therefore capitalize a constructor to clarify that it is a thing `\Float ; Float : Vec`, not an action `\Float , Float -> Float : add {}`. This gives us product types.
+
+To represent sum types, we need to extend this to the ability of having a type that can be any of a set of constructors. Therefore we define a variant, which is just a parametrized collection of constructors, like
+
+```
+\\a : Maybe {
+    \a : Exists
+    \Nothing
+    \a Maybe , (a -> b Maybe)'f -> b Maybe : chain {
+        | Nothing => Nothing
+        | x Exists => x f
+    }
+}
+```
+
+观: We are getting quite a lot of `\`s in the code. The question might be, do we really need them? Especially the `\\` is kinda ugly, and should perhaps be replaced with something like `#`.
+
+议: How about we only introduce untagged/unnamed arguments at the beginning of the function, with any tagged arguments being introduced with the tag they were given in the signature.
+
+To work with polymorphic types, we would like to be able to constrain a general type variable in some form, that the types that might be substituted for it have to satisfy certain conditions. In particular, we want to ensure that certain functions are defined for a type, such that we can legally use these inside a function body.
+
+```
+\[a : Lt] => a , a -> Bool : ne {
+    `==`
+    | False => True
+    | True  => False
+}
+```
+
+另: We might also consider a type class and a variant as one thing, a collection of constructors and functions that we promise to be present for the argument that is provided. The constructors say how the argument might have been constructed, the functions say how the argument might be used. This introduces a notion of subtying, where we consider one collection of constructors and functions a subtype of another, if the former has **at most** the constructors and **at least** the functions of the later. This means that inside the definition of a function which takes an argument by the later specification, we can provide an argument that satisfies the former specification, and are still guaranteed that the function definition is still legal, i.e. that any pattern matching (destruction) will capture any possible value of the argument, and any function application will be well defined. <-- 👍?
+
+
+## Marking symmetric functions
+
+There are many function which are symmetric, like `\Float , Float -> Float : add {}` or `\a , a -> Bool : eq {}`. However, unaware of the symmetry, these will be considered ambiguous if defined with unordered arguments. Therefore, we would either defined them as ordered or with differently named arguments. However, both of these options are somewhat antithetical to them being symmetric. Therefore, it might be of interest to introduce either an option to mark a function as symmetric, which in essence simply causes the compiler to choose one arbitrary order to the arguments in application, or introduce actually an option to proof the symmetry of the function on a meta level to ensure that we are not erroneously deeming functions as symmetric when in fact they are not.
+
+## Ordered arguments
+
+Are ordered arguments in the first place a good idea? Would it make sense for the language to simply not have ordered arguments at all?
+
+反: For infix operations like `>=`, we do need ordered arguments. However, this can be considered a special case.
+
+议:
+
+We only allow ordered arguments for infix operators. Perhaps a syntax like this:
+
+```
+\a List : ++ : a List -> a List {
+
+}
+```
+
+or something less crazy.
