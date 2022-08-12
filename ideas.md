@@ -768,8 +768,8 @@ To represent sum types, we need to extend this to the ability of having a type t
 To work with polymorphic types, we would like to be able to constrain a general type variable in some form, that the types that might be substituted for it have to satisfy certain conditions. In particular, we want to ensure that certain functions are defined for a type, such that we can legally use these inside a function body.
 
 ```
-\[a : Lt] => a , a -> Bool : ne {
-    `==`
+\[Eq : a] => a , a -> Bool : neq {
+    (==)
     | False => True
     | True  => False
 }
@@ -777,6 +777,43 @@ To work with polymorphic types, we would like to be able to constrain a general 
 
 另: We might also consider a type class and a variant as one thing, a collection of constructors and functions that we promise to be present for the argument that is provided. The constructors say how the argument might have been constructed, the functions say how the argument might be used. This introduces a notion of subtying, where we consider one collection of constructors and functions a subtype of another, if the former has **at most** the constructors and **at least** the functions of the later. This means that inside the definition of a function which takes an argument by the later specification, we can provide an argument that satisfies the former specification, and are still guaranteed that the function definition is still legal, i.e. that any pattern matching (destruction) will capture any possible value of the argument, and any function application will be well defined. <-- 👍?
 
+^ Therefore, instead of having type classes that certain type arguments have to comply with, we can directly use a type class as a type. E.g.:
+
+```
+\Show -> String : greet {
+    show
+    ("Hello " ++)
+}
+```
+
+However, we still want to be able to ensure that two arguments are of the same type, instead of two types that fit a provided type (so that their implementations of functions fit):
+
+```
+\[Eq < a] a , a -> Bool : neq {
+    (==)
+    not
+}
+```
+
+And importantly, not just can we consider an argument satisfying one type, but a union of types (i.e. the argument can be either type's constructor, and we can only use functions that both implement)
+```
+\Int + Vec : times-two {
+    =x
+    x + x
+}
+```
+
+观: It would not really make sense to define the intersection of two types, since that would not longer clearly specify what functions can be used inside the function.
+
+However, a consideration should be made how we define what constitutes one type being a subtype of another. For example, if we just define a function `show` in our type declaration, does that automatically mean we are a subtype of `Show` since we have all the functions declared that `Show` specifies? Or do we have to explicitly say that our type's `show` actually is supposed to be the `show` that `Show` defines, not just some random function that happens to have the same name. Also, `show` has to in some manner be declared as abstract in `Show` (e.g. simply leaving away the body `{}`). If that's the case, how about we simply refer to the type `Show` in our definition, either by it's path `\Blorbo -> String : Show.show {...}`, or by opening the Show namespace inside our type declaration.
+
+Another consideration would be the option to extend a type locally. E.g. implementing some type signature we have come up with for our own project for some generic type elsewhere. E.g.:
+
+```
+#+Int {
+    \Int -> String : Show.show {...}
+}
+```
 
 ## Marking symmetric functions
 
