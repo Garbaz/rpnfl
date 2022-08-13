@@ -713,6 +713,8 @@ Instead, I would rather implement general sensible rules that specify operator p
 
 Though the question remains how we would allow for permitting both left and right associative operators. Just enforce one? Make it depend on the operator or it's function somehow?
 
+另: We could also simply not permit custom infix operators. The idea of the language after all is that symbols represent structure, and words represent concepts. If there is some larger concept behind an operator, then it might just be better off as a function. However, this would mean that for any actually structural operators we might want in our language, we do have to bake them in, instead of being able to extend them as fit like we can in Haskell. Another argument against custom operators is that, while the make the code _elegant_, in the long term, they don't make the code _readable_. It only makes sense for something to be represented as an operator, if it either is part of the core code structure, or represents something that ultimately is not relevant to following what the code is doing. We should not have to look up the definition (and especially not the precedence) of infix operators when reading a piece of foreign or old code.
+
 
 ## Monadic IO
 
@@ -796,8 +798,9 @@ However, we still want to be able to ensure that two arguments are of the same t
 ```
 
 And importantly, not just can we consider an argument satisfying one type, but a union of types (i.e. the argument can be either type's constructor, and we can only use functions that both implement)
+
 ```
-\Int + Vec : times-two {
+\Int | Vec : times-two {
     =x
     x + x
 }
