@@ -839,3 +839,38 @@ We only allow ordered arguments for infix operators. Perhaps a syntax like this:
 ```
 
 or something less crazy.
+
+## Meta-data for data
+
+A common occurrence in constructing data types is that we end up bundling some extra data with the data we actually care about for special occasions, recursion, requiring us to always destruct the data and discard the specialized part to get at the data we care about.
+
+One possibility in resolving this is to allow meta-data to be attached to data. In essence, our data just becomes a pair consisting of the type of the meta data and the data, however, when we access a variable of such a type, it is automatically destructed to only the data, unless we explicitly access the meta data. This does not extend the expressibility of our language, but allows for more convenient usage.
+
+One very clear application would be to handle errors that we would not like to explicitly represent with a `Maybe`/etc., like division by 0, but still be catchable at runtime. E.g.:
+
+```
+\Int , Int -> Int$Error : div {
+    =x
+    | 0 => 0$("division by zero" Error)
+    | y => (x / y)$(NoError)
+}
+```
+
+(syntax TBD)
+
+This would mean that we can treat the result as if it simply were an `Int`, but at the same time carry with us when something went wrong. How this is handled externally is a consideration left open. One possibility would be to consider all computation as inherently monadic, with the context simply being always carried through implicitly instead of requiring explicit acknowledgement of it. <-- ❓
+
+另: This general idea could also be considered as a variant on named arguments, where we can take parts of a type that are only considered part of the type if accessed directly via name.
+
+```
+\String, Int'm : Blam
+
+"Hello World" 1729'm Blam -> b
+
+(b == "Hello World") assert
+(b'm == 1729) assert
+```
+
+(syntax TBD)
+
+观: More generally, we want to be able to have multiple perspectives on the same data such that we don't have to be overly verbose in working with it. This includes namespaces (the data of all declared variables) & named arguments for functions / constructors, but could just as well be expanded arbitrarily. The idea hereby being that, just as we work with abstract concepts in our mind, we can write programs where we only consider the parts of our data that we care about at this moment, without having to consider the entire extend of details our data contains. We should be able to specify and carry the details through our program, but have them for our own syntactic understanding separated from the major parts we care about.
