@@ -1,0 +1,24 @@
+use rpnfl_parser::ast::*;
+
+grammar;
+
+pub Expr : Box<Expr> = {
+    <Expr1> <Expr> => Box::new(Expr::Application(<>)),
+    Expr1,
+}
+
+Expr1 : Box<Expr> = {
+    "{" <Expr> "}" => Box::new(Expr::Abstraction(<>)),
+    "$" <Num> => Box::new(Expr::Argument(<>.parse().unwrap())),
+    "%" <Num> => Box::new(Expr::Recursion(<>.parse().unwrap())),
+    // Expr2,
+    "(" <Expr> ")",
+}
+
+// Expr2 : Box<Expr> = {
+    
+// }
+
+Num : String = {
+    r"[0-9]+" => <>.to_string(),
+}

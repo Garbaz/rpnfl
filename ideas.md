@@ -661,7 +661,7 @@ Could we, at least in an opt-in manner, act as if we are simply handing around t
 
 Also, introduce a semantic for tuples/bunches/records being coercible, i.e. we can always consider a collection that has more as one that has less.
 
-议: How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator.
+议: How about we make `a,b,c` and `(a,b,c)` equal to each other, but not equal to `[a,b,c]`. This would make for a neat general semantic idea that `(`/`)` have no meaning other than to define precedence in parsing, whereas `[`/`]` introduce an orthogonal dimension. So `(a,b),c == a,(b,c)`, but `[a,b],c != a,[b,c]`. So `,` becomes a simple associative infix operator again that works with `(`/`)` just like any other infix operator. <-- 👍
 
 
 ## Type annotation for variables
@@ -713,7 +713,7 @@ Instead, I would rather implement general sensible rules that specify operator p
 
 Though the question remains how we would allow for permitting both left and right associative operators. Just enforce one? Make it depend on the operator or it's function somehow?
 
-另: We could also simply not permit custom infix operators. The idea of the language after all is that symbols represent structure, and words represent concepts. If there is some larger concept behind an operator, then it might just be better off as a function. However, this would mean that for any actually structural operators we might want in our language, we do have to bake them in, instead of being able to extend them as fit like we can in Haskell. Another argument against custom operators is that, while the make the code _elegant_, in the long term, they don't make the code _readable_. It only makes sense for something to be represented as an operator, if it either is part of the core code structure, or represents something that ultimately is not relevant to following what the code is doing. We should not have to look up the definition (and especially not the precedence) of infix operators when reading a piece of foreign or old code.
+另: We could also simply not permit custom infix operators. The idea of the language after all is that symbols represent structure, and words represent concepts. If there is some larger concept behind an operator, then it might just be better off as a function. However, this would mean that for any actually structural operators we might want in our language, we do have to bake them in, instead of being able to extend them as fit like we can in Haskell. Another argument against custom operators is that, while they make the code _elegant_, in the long term, they don't make the code _readable_. It only makes sense for something to be represented as an operator, if it either is part of the core code structure, or represents something that ultimately is not relevant to follow what the code is doing. We should not have to look up the definition (and especially not the precedence) of infix operators when reading a piece of code.
 
 
 ## Monadic IO
@@ -842,7 +842,7 @@ or something less crazy.
 
 ## Meta-data for data
 
-A common occurrence in constructing data types is that we end up bundling some extra data with the data we actually care about for special occasions, recursion, requiring us to always destruct the data and discard the specialized part to get at the data we care about.
+A common occurrence in constructing data types is that we end up bundling some extra data with the data we actually care about for special occasions/recursion, requiring us to always destruct the data and discard the specialized part to get at the data we care about.
 
 One possibility in resolving this is to allow meta-data to be attached to data. In essence, our data just becomes a pair consisting of the type of the meta data and the data, however, when we access a variable of such a type, it is automatically destructed to only the data, unless we explicitly access the meta data. This does not extend the expressibility of our language, but allows for more convenient usage.
 
@@ -874,3 +874,32 @@ This would mean that we can treat the result as if it simply were an `Int`, but 
 (syntax TBD)
 
 观: More generally, we want to be able to have multiple perspectives on the same data such that we don't have to be overly verbose in working with it. This includes namespaces (the data of all declared variables) & named arguments for functions / constructors, but could just as well be expanded arbitrarily. The idea hereby being that, just as we work with abstract concepts in our mind, we can write programs where we only consider the parts of our data that we care about at this moment, without having to consider the entire extend of details our data contains. We should be able to specify and carry the details through our program, but have them for our own syntactic understanding separated from the major parts we care about.
+
+## Type Tag as data wrapper
+
+The purpose of type tags is to differentiate types such that the type signature of an unordered function is unambiguous. In essence however, a type tag is not really different from a wrapper type (i.e. a constructor of a single polymorphic argument). E.g.:
+
+```
+\a : W
+\Int W , Int -> Int : f {
+    |(x W) => x =x
+    =y
+    x + y
+}
+
+/// achieves the same effect as
+
+\Int'w , Int -> Int : f {
+    (w +)
+}
+```
+
+This way, a type tag can be considered simply a special kind of constructor that
+
+- Is implicitly defined when it appears inside the type signature of a function
+- Has special syntax for constructing (e.g.`0'w`)
+- Is automatically destructed and it's contents assigned to a variable inside the function
+
+## Functions as incomplete data
+
+Instead of looking at a function as transforming data, we can also consider it as a piece of data that has yet to be fully determined
