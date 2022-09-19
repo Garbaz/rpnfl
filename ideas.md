@@ -5,7 +5,7 @@
 
 ## Values
 
-At any point in the program, can have a floating value, e.g.
+At any point in the program, we can have a floating value, e.g.
 
 ```
 5
@@ -161,7 +161,7 @@ critical : a, (!excpt) b => (a -> b) -> b
 
 問題: What else other than exceptions would we use this system for however?
 
-問題: This is in a way similar or the opposite of constructors, we keep track of where our value came from, but contrary to constructors, we can still access the contained value, and don't have to wrapped in the constructor.
+問題: This is in a way similar or the opposite of constructors, we keep track of where our value came from, but contrary to constructors, we can still access the contained value, and don't have it wrapped in the constructor.
 
 
 ## Traits/Classes
@@ -820,7 +820,7 @@ Another consideration would be the option to extend a type locally. E.g. impleme
 
 ## Marking symmetric functions
 
-There are many function which are symmetric, like `\Float , Float -> Float : add {}` or `\a , a -> Bool : eq {}`. However, unaware of the symmetry, these will be considered ambiguous if defined with unordered arguments. Therefore, we would either defined them as ordered or with differently named arguments. However, both of these options are somewhat antithetical to them being symmetric. Therefore, it might be of interest to introduce either an option to mark a function as symmetric, which in essence simply causes the compiler to choose one arbitrary order to the arguments in application, or introduce actually an option to proof the symmetry of the function on a meta level to ensure that we are not erroneously deeming functions as symmetric when in fact they are not.
+There are many function which are symmetric, like `\Float , Float -> Float : add {}` or `\a , a -> Bool : eq {}`. However, unaware of the symmetry, these will be considered ambiguous if defined with unordered arguments. Therefore, we would either define them as ordered or with differently named arguments. However, both of these options are somewhat antithetical to them being symmetric. Therefore, it might be of interest to introduce either an option to mark a function as symmetric, which in essence simply causes the compiler to choose one arbitrary order to the arguments in application, or introduce actually an option to proof the symmetry of the function on a meta level to ensure that we are not erroneously deeming functions as symmetric when in fact they are not.
 
 ## Ordered arguments
 
@@ -896,10 +896,14 @@ The purpose of type tags is to differentiate types such that the type signature 
 
 This way, a type tag can be considered simply a special kind of constructor that
 
-- Is implicitly defined when it appears inside the type signature of a function
-- Has special syntax for constructing (e.g.`0'w`)
-- Is automatically destructed and it's contents assigned to a variable inside the function
+- is implicitly defined when it appears inside the type signature of a function
+- has special syntax for constructing (e.g.`0'w`)
+- is automatically destructed and it's contents assigned to a variable inside the function
 
 ## Functions as incomplete data
 
 Instead of looking at a function as transforming data, we can also consider it as a piece of data that has yet to be fully determined
+
+## Implicit arguments and secondary scope
+
+In a language like Agda there are implicit arguments which for most situation do not have to be accessed. But if we do, it's always a bit of a chase to get to them. And more generally, we might want to have values present but not cluttering up the main scope. Therefore, instead of having things completely out of scope that then have to be brought into scope, we could have a "secondary" scope which simply is differentiated by being somewhat less direct to access, e.g. requiring a prefix or something like that. This also goes with the "Meta-data" idea above. 
