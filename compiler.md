@@ -37,3 +37,8 @@ Instead of requiring the user to specify configurations to the compiler as comma
 _As a more general principle:_ Provide an isomorphic but not equal interface for things to the user and the computer, instead of trying to find a format that suits both the user and the computer. If needed, the user can still edit configuration manually, but they should not have to.
 
 This could build upon the bigger idea of having UI/file formats that are derived from the structure of data, instead of being constructed manually. We should not have to manually maintain a user interface and a config parser for the data structure that represents our compiler configuration. Instead, they should be derivable by some general principles.
+
+
+### Type reduction
+
+While code internally and for interfacing with other code has to retain type information, when we compile the code to a final binary, this information no longer is necessary. Therefore, in that case, types can be reduced for optimization without any loss of function. E.g. `Unit Maybe` can be reduced to an enumeration of two values, equivalent to `Bool`. Also, indirections can incorporated for all cases where the size of the indirect value is known.
