@@ -912,6 +912,10 @@ In a language like Agda there are implicit arguments which for most situation do
 
 Prog lang where `f:a->z` and `g:b->z` mean that `h = f && g` is a valid expression and equivalent to  `h = \x y -> (f x) && (g y)`, resulting in `h:a->b->z`. I.e. Functions are implicitly open, and missing arguments are handed up to the parent expression. I.e. a function `a->b` does not require what is given as it's argument syntactically to be complete expression of type `a`, but can be any abstraction with a result type of `a`, with the abstraction being pulled over the application. I.e. "Functions as incomplete data".
 
-I.e. If `f:p->q->z`, `g:a->p` and `h:b->q`, then `f g h` (in postfix notation) means `\x y -> f (g x) (h y)`. It's not the same as `(f g) h`, but the same as `f (g h)`, since `(g h):q->a->z` and therefore `f (g h):a->b->z`, under the assumption that the new arguments are appended last (for ordered functions).
+E.g. If `f:p->q->z`, `g:a->p` and `h:b->q`, then `g h f` means `\x y -> (x g) (y h) f`. It's not the same as `(g h) f`, but the same as `g (h f)`, with `h f:p->b->z` and therefore `g (h f):a->b->z`.
 
-Is this in the end the same as I have proposed so far? Or does this differ in some way? Which is more intuitive?/
+
+
+E.g. `{inc} map concat` is okay, because `concat:a List->a`, `map:a List->(a->b)->b List`, so `map concat:a List->(a->b)->b`, and so `{inc} map concat:a List->b`.
+
+Is this in the end the same as I have proposed so far? Or does this differ in some way? Which is more intuitive?
