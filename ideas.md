@@ -908,14 +908,22 @@ Instead of looking at a function as transforming data, we can also consider it a
 
 In a language like Agda there are implicit arguments which for most situation do not have to be accessed. But if we do, it's always a bit of a chase to get to them. And more generally, we might want to have values present but not cluttering up the main scope. Therefore, instead of having things completely out of scope that then have to be brought into scope, we could have a "secondary" scope which simply is differentiated by being somewhat less direct to access, e.g. requiring a prefix or something like that. This also goes with the "Meta-data" idea above. 
 
-### Alternative approach to syntax of application
+## Alternative approach to syntax of application
 
-Prog lang where `f:a->z` and `g:b->z` mean that `h = f && g` is a valid expression and equivalent to  `h = \x y -> (f x) && (g y)`, resulting in `h:a->b->z`. I.e. Functions are implicitly open, and missing arguments are handed up to the parent expression. I.e. a function `a->b` does not require what is given as it's argument syntactically to be complete expression of type `a`, but can be any abstraction with a result type of `a`, with the abstraction being pulled over the application. I.e. "Functions as incomplete data".
+How about: Given `f:a->z` and `g:b->z` means that `h = f && g` is a valid expression and equivalent to  `h = \x y -> (x f) && (y g)`, resulting in `h:a->b->z`. I.e. Functions are implicitly open, and missing arguments are handed up to the parent expression. I.e. a function `a->b` does not require what is given as it's argument syntactically to be complete expression of type `a`, but can be any abstraction with a result type of `a`, with the abstraction being pulled over the application. I.e. "Functions as incomplete data".
 
-E.g. If `f:p->q->z`, `g:a->p` and `h:b->q`, then `g h f` means `\x y -> (x g) (y h) f`. It's not the same as `(g h) f`, but the same as `g (h f)`, with `h f:p->b->z` and therefore `g (h f):a->b->z`.
-
-
+E.g. If `f:p->q->z`, `g:a->p` and `h:b->q`, then `g h f` is the same as `\x y -> (x g) (y h) f`. It's not the same as `(g h) f`, but the same as `g (h f)`, with `h f:p->b->z` and therefore `g (h f):a->b->z`.
 
 E.g. `{inc} map concat` is okay, because `concat:a List->a`, `map:a List->(a->b)->b List`, so `map concat:a List->(a->b)->b`, and so `{inc} map concat:a List->b`.
 
 Is this in the end the same as I have proposed so far? Or does this differ in some way? Which is more intuitive?
+
+## Reconsidering paths
+
+As it stands, I am defining paths to be right branching like everything else in the language. There are two things that speak against this:
+- It's unnatural given the rest of the language's grammar (-> Japanese genitive) <-- Not very relevant, but linguistically interesting
+- It's inconvenient for autocomplete (e.g. `Module.[CTRL+SPACE]` allows us to look through everything defined in `Module`, whereas the same is not possible with `???.Module`)
+
+=> Redefine paths as left branching <- 👍
+
+想: Autocomplete in programming is the same as predicting ahead in language comprehension.

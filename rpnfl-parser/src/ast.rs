@@ -1,31 +1,80 @@
-use std::fmt::Display;
+// pub enum ObjectKind {
+//     Module,
+//     Function,
+//     Constructor,
+// }
+
+// pub struct Object<'a> {
+//     pub kind : ObjectKind,
+//     pub name : String,
+//     pub parent : &'a Object<'a>,
+// }
+
+#[derive(Debug, Clone)]
+pub struct Path(pub Vec<String>);
 
 #[derive(Debug, Clone)]
 pub enum Expr {
-    Argument(usize),
-    Recursion(usize),
-    Abstraction(Box<Expr>),
-    Application(Box<Expr>, Box<Expr>),
+    SubExpressions(Vec<Expr>),
+    EscExpressions(Vec<Expr>),
+    Reference(Path),
+    Assign(String),
+    Tag(String),
+    DefFunction {
+        name: String,
+        froms: TypeList,
+        to: Type,
+        body: Box<Expr>,
+    },
+    DefConstructor {
+        name: String,
+        froms: TypeList,
+    },
+    DefModule {
+        name: String,
+        froms: TypeList,
+        body: Box<Expr>,
+    },
+    Destructor(Pattern, Box<Expr>),
+    Conditional {
+        if_: Box<Expr>,
+        then: Box<Expr>,
+        else_: Box<Expr>,
+    },
+    Collection(ExprList),
+    Numeral(Numeral),
+    Bespoke(Bespoke),
+    Import(Path),
 }
 
-// impl Display for Expr {
-//     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Expr::Argument(n) => write!(fmt, "${}", n),
-//             Expr::Recursion(l) => write!(fmt, "%{}", l),
-//             Expr::Abstraction(b) => write!(fmt, "{{{}}}", b),
-//             Expr::Application(a, f) => {
-//                 if let Expr::Application(_, _) = a.as_ref() {
-//                     write!(fmt, "({}) ", a)?
-//                 } else {
-//                     write!(fmt, "{} ", a)?
-//                 }
-//                 if let Expr::Application(_, _) = f.as_ref() {
-//                     write!(fmt, "({})", f)
-//                 } else {
-//                     write!(fmt, "{}", f)
-//                 }
-//             }
-//         }
-//     }
-// }
+#[derive(Debug, Clone)]
+pub struct ExprList {
+    pub ordered: bool,
+    pub exprs: Vec<Expr>,
+}
+
+#[derive(Debug, Clone)]
+pub enum Type {
+    Tagged { tag: String, type_: Box<Type> },
+    Function { froms: TypeList, to: Box<Type> },
+    Variable(String),
+    DataType { path : Path, args: Vec<Type>} ,
+}
+
+#[derive(Debug, Clone)]
+pub struct TypeList {
+    pub ordered: bool,
+    pub types: Vec<Type>,
+}
+
+#[derive(Debug, Clone)]
+pub enum Numeral {
+    Integer(i64),
+    Float(f64),
+}
+
+#[derive(Debug, Clone)]
+pub enum Bespoke {}
+
+#[derive(Debug, Clone)]
+pub enum Pattern {}

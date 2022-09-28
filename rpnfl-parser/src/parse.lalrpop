@@ -2,23 +2,124 @@ use rpnfl_parser::ast::*;
 
 grammar;
 
-pub Expr : Box<Expr> = {
-    <Expr1> <Expr> => Box::new(Expr::Application(<>)),
-    Expr1,
+pub Expr : Expr = {
+    "(" <Expr+> ")" => Expr::SubExpressions(<>),
+    "{" <Expr+> "}" => Expr::EscExpressions(<>),
+    SnakePath => Expr::Reference(<>),
+    "=" <SnakeLabel> => Expr::Assign(<>),
+    "'" <SnakeLabel> => Expr::Tag(<>),
+    "\\" <froms:TypeList> "->" <to:Type> ":" <name:SnakeLabel> <body:Expr> =>
+        Expr::DefFunction{name, froms, to, body:Box::new(body)},
+    "\\" <froms:TypeList> ":" <name:CamelLabel> =>
+        Expr::DefConstructor{name, froms},
+    "#" <name:CamelLabel> <body:Expr> =>
+        Expr::DefModule{
+            name,
+            froms:TypeList{ordered:false, types:vec![]},
+            body:Box::new(body)
+        },
+    // "#" <froms:TypeList> ":" <name:CamelLabel> <body:Expr> =>
+    //     Expr::DefModule{name, froms, body},
 }
 
-Expr1 : Box<Expr> = {
-    "{" <Expr> "}" => Box::new(Expr::Abstraction(<>)),
-    "$" <Num> => Box::new(Expr::Argument(<>.parse().unwrap())),
-    "%" <Num> => Box::new(Expr::Recursion(<>.parse().unwrap())),
-    // Expr2,
-    "(" <Expr> ")",
+pub Type : Type = {
+    <type_:Type> "'" <tag:SnakeLabel> => Type::Tagged{tag, type_:Box::new(type_)},
+    SnakeLabel => Type::Variable(<>),
+    CamelPath => Type::DataType{path:<>, args:vec![]},
+    "(" <Type1> ")",
 }
 
-// Expr2 : Box<Expr> = {
-    
+Type1 : Type = {
+    Type,
+    <froms:TypeList> "->" <to:Type> => Type::Function{froms, to:Box::new(to)},
+    <args:(Type)+> <path:CamelPath> => Type::DataType{path, args},
+}
+
+TypeList : TypeList = {UnorderedTypeList, OrderedTypeList}
+
+UnorderedTypeList : TypeList = {
+    SeperatedMT<",", Type, Type> => TypeList{ordered:false, types:<>}
+}
+
+OrderedTypeList : TypeList = {
+    SeperatedAT<";", Type, Type> => TypeList{ordered:true, types:<>}
+}
+
+SnakePath : Path = {
+    SeperatedF<".", CamelLabel, SnakeLabel> => Path(<>)
+}
+
+CamelPath : Path = {
+    SeperatedF<".", CamelLabel, CamelLabel> => Path(<>)
+}
+
+SnakeLabel : String = {
+    <r"[a-z][a-z_]*"> => <>.to_string()
+}
+
+CamelLabel : String = {
+    <r"[A-Z][A-Za-z]*"> => <>.to_string()
+}
+
+SeperatedNT<SEP,HEAD,TAIL> : Vec<HEAD> = {
+    <x:HEAD> <mut xs:(SEP <TAIL>)*> => {
+        let mut r = vec![x];
+        r.append(&mut xs);
+        r
+    }
+}
+
+SeperatedMT<SEP,HEAD,TAIL> : Vec<HEAD> = {
+    <x:HEAD> <mut xs:(SEP <TAIL>)*> SEP? => {
+        let mut r = vec![x];
+        r.append(&mut xs);
+        r
+    }
+}
+
+SeperatedAT<SEP,HEAD,TAIL> : Vec<HEAD> = {
+    <x:HEAD> <mut xs:(SEP <TAIL>)*> SEP => {
+        let mut r = vec![x];
+        r.append(&mut xs);
+        r
+    }
+}
+
+SeperatedF<SEP,INIT,LAST> : Vec<LAST> = {
+    <mut xs:(<INIT> SEP)*> <x:LAST> => {
+        xs.push(x);
+        xs
+    }
+}
+
+// pub Expr : Box<Expr> = {
+//     "hello" => Box::new(Expr::)
 // }
 
-Num : String = {
-    r"[0-9]+" => <>.to_string(),
-}
+// Expr1 : Box<Expr> = {
+//     "{" <Expr> "}" => Box::new(Expr::Abstraction(<>)),
+//     "$" <Num> => Box::new(Expr::Argument(<>.parse().unwrap())),
+//     "%" <Num> => Box::new(Expr::Recursion(<>.parse().unwrap())),
+//     // Expr2,
+//     "(" <Expr> ")",
+// }
+
+// // Expr2 : Box<Expr> = {
+    
+// // }
+
+// Num : String = {
+//     r"[0-9]+" => <>.to_string(),
+// }
+
+    // <l:CamelLabel> <mut ls:("." <CamelLabel>)*> => {
+    //     let mut r = vec![l];
+    //     r.append(&mut ls);
+    //     Path(r)
+    // }
+
+    // <l:SnakeLabel> <mut ls:("." <CamelLabel>)*> => {
+    //     let mut r = vec![l];
+    //     r.append(&mut ls);
+    //     Path(r)
+    // }

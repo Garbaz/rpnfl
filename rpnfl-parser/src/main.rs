@@ -19,24 +19,24 @@ impl History<String> for InputHistory {
     }
 }
 
-fn printhelp() {
-    println!("  Commands:");
-    println!("    ast - Enable/[Disable] prettyprinting AST.");
-    println!("    trace - [Enable]/Disable printing the evaluation trace.");
-    println!("    stack - Enable/[Disable] printing the stack in the evaluation trace.");
-    println!();
-    println!("  Otherwise, simply enter any valid expression to be evaluated.");
-}
+// fn printhelp() {
+//     println!("  Commands:");
+//     println!("    ast - Enable/[Disable] prettyprinting AST.");
+//     println!("    trace - [Enable]/Disable printing the evaluation trace.");
+//     println!("    stack - Enable/[Disable] printing the stack in the evaluation trace.");
+//     println!();
+//     println!("  Otherwise, simply enter any valid expression to be evaluated.");
+// }
 
-fn abled(b: bool) -> String {
-    (if b { "enabled" } else { "disabled" }).to_string()
-}
+// fn abled(b: bool) -> String {
+//     (if b { "enabled" } else { "disabled" }).to_string()
+// }
 
 fn main() {
-    let mut prettyprint = false;
+    // let mut prettyprint = false;
     let mut input_hist = InputHistory(VecDeque::new());
 
-    printhelp();
+    // printhelp();
 
     loop {
         let line: String = Input::with_theme(&ColorfulTheme::default())
@@ -45,16 +45,18 @@ fn main() {
             .interact_text()
             .unwrap();
 
-        let parse = parse::ExprParser::new().parse(&line);
-        if prettyprint {
-            println!("{:#?}", parse);
-            println!();
-        } else {
-            match &parse {
-                Ok(l) => println!("{:#?}", l),
-                Err(e) => println!("{:?}", e),
-            }
-        }
-        if let Ok(l) = parse {}
+        println!("{}", line);
+
+    //     let parse = parse::ExprParser::new().parse(&line);
+    //     if prettyprint {
+    //         println!("{:#?}", parse);
+    //         println!();
+    //     } else {
+    //         match &parse {
+    //             Ok(l) => println!("{:#?}", l),
+    //             Err(e) => println!("{:?}", e),
+    //         }
+    //     }
+    //     if let Ok(l) = parse {}
     }
 }
