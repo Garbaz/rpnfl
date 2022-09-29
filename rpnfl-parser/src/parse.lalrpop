@@ -5,7 +5,7 @@ grammar;
 pub Expr : Expr = {
     "(" <Expr+> ")" => Expr::SubExpressions(<>),
     "{" <Expr+> "}" => Expr::EscExpressions(<>),
-    SnakePath => Expr::Reference(<>),
+    Path => Expr::Reference(<>),
     "=" <SnakeLabel> => Expr::Assign(<>),
     "'" <SnakeLabel> => Expr::Tag(<>),
     "\\" <froms:TypeList> "->" <to:Type> ":" <name:SnakeLabel> <body:Expr> =>
@@ -20,19 +20,20 @@ pub Expr : Expr = {
         },
     // "#" <froms:TypeList> ":" <name:CamelLabel> <body:Expr> =>
     //     Expr::DefModule{name, froms, body},
+    "|" <pattern:Pattern> "=>" <body:Expr> => Expr::Destructor{pattern, body:Box::new(body)},
 }
 
 pub Type : Type = {
+    "(" <Type1> ")",
     <type_:Type> "'" <tag:SnakeLabel> => Type::Tagged{tag, type_:Box::new(type_)},
     SnakeLabel => Type::Variable(<>),
     CamelPath => Type::DataType{path:<>, args:vec![]},
-    "(" <Type1> ")",
 }
 
 Type1 : Type = {
-    Type,
     <froms:TypeList> "->" <to:Type> => Type::Function{froms, to:Box::new(to)},
     <args:(Type)+> <path:CamelPath> => Type::DataType{path, args},
+    Type,
 }
 
 TypeList : TypeList = {UnorderedTypeList, OrderedTypeList}
@@ -44,6 +45,20 @@ UnorderedTypeList : TypeList = {
 OrderedTypeList : TypeList = {
     SeperatedAT<";", Type, Type> => TypeList{ordered:true, types:<>}
 }
+
+Pattern : Pattern = {
+    "(" <Pattern1> ")",
+    SnakeLabel => Pattern::Variable(<>),
+    "_" => Pattern::Ignore,
+}
+
+Pattern1 : Pattern = {
+    <args:Pattern*> <name:CamelLabel> => Pattern::Constructor{name, args},
+    <arg:Pattern> "'" <tag:SnakeLabel> => Pattern::Tagged{tag, arg:Box::new(arg)},
+    Pattern,
+}
+
+Path : Path = {SnakePath, CamelPath}
 
 SnakePath : Path = {
     SeperatedF<".", CamelLabel, SnakeLabel> => Path(<>)
@@ -60,6 +75,11 @@ SnakeLabel : String = {
 CamelLabel : String = {
     <r"[A-Z][A-Za-z]*"> => <>.to_string()
 }
+
+// SnakeLabelOrBlank : String = {
+//     SnakeLabel,
+//     "_" => <>.to_string()
+// }
 
 SeperatedNT<SEP,HEAD,TAIL> : Vec<HEAD> = {
     <x:HEAD> <mut xs:(SEP <TAIL>)*> => {

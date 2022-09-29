@@ -14,6 +14,8 @@ Every expression is a series of expressions (e.g. `([1,2,3] {add1} map)`). All e
 - https://en.wikipedia.org/wiki/Semantics_(computer_science)#Approaches
 - https://media.handmade-seattle.com/roc-lang/
 - https://github.com/roc-lang/roc
+- https://www.youtube.com/watch?v=-IsbsfV3jmw
+- https://en.wikipedia.org/wiki/C--
 
 Maybe compile to C or, perhaps even simpler, to Haskell or some Lisp (e.g. Scheme) to avoid hassle? Especially to begin with.
 

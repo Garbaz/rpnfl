@@ -1,0 +1,4 @@
+\(a List) -> (a Optional) : head {
+   | (x _ Con) => {x Exists}
+   | (Empty) => {Nothing}
+}

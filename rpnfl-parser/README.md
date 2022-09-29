@@ -13,8 +13,7 @@ Expr ::= "(" Expr {Expr} ")"
        | Constr 
        | Module 
        | Destr 
-       | Cond 
-       | Collct 
+       | Collct
        | Number 
        | Bespoke
 

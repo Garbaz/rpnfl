@@ -926,4 +926,46 @@ As it stands, I am defining paths to be right branching like everything else in 
 
 => Redefine paths as left branching <- 👍
 
-想: Autocomplete in programming is the same as predicting ahead in language comprehension.
+想: Autocomplete in programming is the same as predicting ahead in language comprehension. We want for the context to most narrow what could come next.
+
+## Patterns
+
+The simplest kind of deconstruction pattern is to simply write out a constructor, with the components assigned to variables.
+
+```
+v | x y z C => (...x...y...z...)
+```
+
+For this to be executed, we have to simply check that `x` is a `C` construct and unravel it. If `x` is of type `C`, this can be directly ensured at compile time. However, if `x` is of a module type `M` containing `C`, information has to be retained at runtime with which constructor in `M` `x` has been constructed with.
+
+For more complex hierarchical patterns, this process simply has to be repeated recursively. If e.g. `x` is not a variable, but `p q D`:
+
+```
+v | (p q D) y z C => (...p...q...y...z...)
+```
+
+Then this can be treated as/reformed into:
+
+```
+v | x y z C => (x | p q D => (...p...q...y...z...))
+```
+
+## Unordered Constructors
+
+Just like with functions, we could allow constructors to be defined unordered. However, different to functions, where we only ever have to put in arguments to the function, constructors also can be destructed again. E.g.:
+
+```
+\Int , String : Index
+1 "Hello" Index =p
+p | x y Pair => {...x...y...}
+```
+
+However, the question is: Is `x == 1 && y == "Hello"` or `x == "Hello" && y == 1` in the destructor's body?
+
+_Option 1:_ Constructors are simply ordered in patterns, the order being the order given in the constructors definition. While philosophically this isn't super clean, it would be much easier to implement. With the main reason for wanting unordered arguments is to allow for currying in application, this wouldn't really be a problem. If we don't care about a certain component of the data, we can simply give it a `_` and ignore it.
+
+_Option 2:_ Instead of having `_` to ignore arguments, we do allow for constructors to appear in patterns only partially applied and unordered. The main problem with this is that we have to somehow figure out from the usage of the variables that we do capture which component of the data it is referring to. This might not always be possible. Specifically:
+
+When we define an unordered function or constructor, what matters is that the it's arguments could under no circumstances take the same value. I.e. For a function of type `A , B -> C`, there can not exist a type `T` such that `T <: A` and `T <: B`, or in other words, if we have any possible type in the language, we have to be able to exclusively decide whether it fits `A`, it fits `B`, or it fits neither.
+
+However, when we want to destruct an unordered constructor in an unordered fashion, what matters instead is that it's components could under no circumstance be used the same. I.e. For a constructor of type `A, B`, there can not exist a type `T` such that `A <: T` and `B <: T`.

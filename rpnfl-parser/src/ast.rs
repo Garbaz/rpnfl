@@ -35,7 +35,10 @@ pub enum Expr {
         froms: TypeList,
         body: Box<Expr>,
     },
-    Destructor(Pattern, Box<Expr>),
+    Destructor {
+        pattern: Pattern,
+        body: Box<Expr>,
+    },
     Conditional {
         if_: Box<Expr>,
         then: Box<Expr>,
@@ -43,7 +46,7 @@ pub enum Expr {
     },
     Collection(ExprList),
     Numeral(Numeral),
-    Bespoke(Bespoke),
+    Bespoke(Box<Bespoke>),
     Import(Path),
 }
 
@@ -58,7 +61,7 @@ pub enum Type {
     Tagged { tag: String, type_: Box<Type> },
     Function { froms: TypeList, to: Box<Type> },
     Variable(String),
-    DataType { path : Path, args: Vec<Type>} ,
+    DataType { path: Path, args: Vec<Type> },
 }
 
 #[derive(Debug, Clone)]
@@ -68,13 +71,27 @@ pub struct TypeList {
 }
 
 #[derive(Debug, Clone)]
+pub enum Pattern {
+    Ignore,
+    Variable(String),
+    Constructor { name: String, args: Vec<Pattern> },
+    Tagged { tag: String, arg: Box<Pattern> },
+}
+
+#[derive(Debug, Clone)]
 pub enum Numeral {
     Integer(i64),
     Float(f64),
 }
 
 #[derive(Debug, Clone)]
-pub enum Bespoke {}
-
-#[derive(Debug, Clone)]
-pub enum Pattern {}
+pub enum Bespoke {
+    Add(Expr, Expr),
+    Sub(Expr, Expr),
+    Mul(Expr, Expr),
+    Div(Expr, Expr),
+    Neg(Expr),
+    And(Expr, Expr),
+    Or(Expr, Expr),
+    Not(Expr, Expr),
+}
