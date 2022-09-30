@@ -114,7 +114,7 @@ pub struct TypeList {
 
 #[derive(Debug, Clone)]
 pub enum Pattern {
-    Ignore,
+    Blank,
     Variable(String),
     Constructor { name: String, args: Vec<Pattern> },
     Tagged { tag: String, arg: Box<Pattern> },

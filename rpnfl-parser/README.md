@@ -5,68 +5,70 @@
 ```ebnf
 Expr ::= "(" Expr {Expr} ")" 
        | "{" Expr {Expr} "}"
-       | FuncRefr 
+       | Refr 
        | Assign 
        | Tag 
-       | Import 
        | Func 
        | Constr 
        | Module 
        | Destr 
        | Collct
+       | Import 
        | Number 
        | Bespoke
 
 Assign ::= "=" VarName
-Tag ::= "'" lowercase
-Import ::= "@" ModuleRefr
-Func ::= "\" Types "->" Type ":" FuncName Expr
+Tag    ::= "'" lowercase
+Func   ::= "\" Types "->" Type ":" FuncName Expr
 Constr ::= "\" Types ":" ConstrName
 Module ::= "#" [Types ":"] ModuleName Expr
-Destr ::= "|" Pattern "=>" Expr
+Destr  ::= "|" Pattern "=>" Expr
 Collct ::= "[" (UnorderedCollct | OrderedCollct) "]"
+Import ::= "@" ModuleRefr
 
-Pattern ::= "(" Pattern ")" | {Pattern} TypeName | VarName
+Pattern ::= "(" Pattern ")" | {Pattern} TypeName | VarName | "_"
 
 UnorderedCollct ::= Expr "," [UnorderedCollct | Expr]
-OrderedCollct ::= Expr ";" [OrderedCollct | Expr]
+OrderedCollct   ::= Expr ";" [OrderedCollct | Expr]
 
 Type ::= "(" Type ")"
        | Type Tag
-       | (Types "->" Type)
+       | Types "->" Type
        | "[" Type "]"
        | TypeVarName
        | ConstrName
        | {Type} ModuleRefr
 Types ::= UnorderedTypes | OrderedTypes
-UnorderedTypes ::= Type | (Type "," UnorderedTypes)
-OrderedTypes ::= Type | (Type ";" OrderedTypes)
+UnorderedTypes ::= Type | Type "," UnorderedTypes
+OrderedTypes   ::= Type | Type ";" OrderedTypes
 
-FuncRefr ::= FuncName Path
-TypeRefr ::= TypeName Path 
-ModuleRefr ::= ModuleName Path
-Path ::= {"." ModuleName}
+Refr ::= FuncRefr | ConstrRefr
+FuncRefr   ::= Path FuncName
+ConstrRefr ::= Path ConstrName
+TypeRefr   ::= Path TypeName 
+ModuleRefr ::= Path ModuleName
+Path ::= {ModuleName "."}
 
-VarName ::= Label
-FuncName ::= Label
-ConstrName ::= CapLabel
-ModuleName ::= CapLabel
-TypeVarName ::= Label
+VarName ::= SnakeLabel
+FuncName ::= SnakeLabel
+ConstrName ::= CamelLabel
+ModuleName ::= CamelLabel
+TypeVarName ::= SnakeLabel
 
-Label ::= <lowercase> {<lowercase> | "_" | <numeral>}
-CapLabel ::= <uppercase> {<uppercase> | <lowercase> | "_" | <numeral>}
+SnakeLabel ::= <lowercase> {<lowercase> | "_" | <numeral>}
+CamelLabel ::= <uppercase> {<uppercase> | <lowercase> | <numeral>}
 
 Number ::= Integer | Float
 Integer ::= ["-"] <digit> {<digit>}
-Float ::= ["-"] <digit> {<digit>} "." {<digit>}
+Float   ::= ["-"] <digit> {<digit>} "." {<digit>}
 
- Bespoke ::= Expr "+" Expr 
- | Expr "-" Expr 
- | Expr "*" Expr 
- | Expr "/" Expr 
- | Expr "&&" Expr 
- | Expr "||" Expr
- | "!" Expr
+Bespoke ::= Expr "+" Expr 
+          | Expr "-" Expr 
+          | Expr "*" Expr 
+          | Expr "/" Expr 
+          | Expr "&&" Expr 
+          | Expr "||" Expr
+          | "!" Expr
 ```
 
 ## TODO/Notes

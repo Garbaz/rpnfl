@@ -25,6 +25,7 @@ pub RawExpr : RawExpr = {
     // "#" <froms:TypeList> ":" <name:CamelLabel> <body:Expr> =>
     //     RawExpr::DefModule{name, froms, body},
     "|" <pattern:Pattern1> "=>" <body:Expr> => RawExpr::Destructor{pattern, body:Box::new(body)},
+    "@" <CamelPath> => RawExpr::Import(<>)
 }
 
 pub Type : Type = {
@@ -57,7 +58,7 @@ OrderedTypeList : TypeList = {
 Pattern : Pattern = {
     "(" <Pattern1> ")",
     SnakeLabel => Pattern::Variable(<>),
-    "_" => Pattern::Ignore,
+    "_" => Pattern::Blank,
 }
 
 Pattern1 : Pattern = {
