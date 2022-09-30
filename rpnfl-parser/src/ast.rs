@@ -83,9 +83,23 @@ pub struct ExprList {
     pub ordered: bool,
     pub exprs: Vec<Expr>,
 }
+#[derive(Debug, Clone)]
+pub struct Type {
+    pub location: (usize, usize),
+    pub raw_type: RawType,
+}
+
+impl Type {
+    pub fn new(l: usize, r: usize, raw_type: RawType) -> Self {
+        Self {
+            location: (l, r),
+            raw_type,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
-pub enum Type {
+pub enum RawType {
     Tagged { tag: String, type_: Box<Type> },
     Function { froms: TypeList, to: Box<Type> },
     Variable(String),

@@ -28,16 +28,20 @@ pub RawExpr : RawExpr = {
 }
 
 pub Type : Type = {
-    "(" <Type1> ")",
-    <type_:Type> "'" <tag:SnakeLabel> => Type::Tagged{tag, type_:Box::new(type_)},
-    SnakeLabel => Type::Variable(<>),
-    CamelPath => Type::DataType{path:<>, args:vec![]},
+    <l:@L> <raw_type:RawType> <r:@R> => Type::new(l, r, raw_type),
 }
 
-Type1 : Type = {
-    <froms:TypeList> "->" <to:Type> => Type::Function{froms, to:Box::new(to)},
-    <args:(Type)+> <path:CamelPath> => Type::DataType{path, args},
-    Type,
+pub RawType : RawType = {
+    "(" <RawType1> ")",
+    <type_:Type> "'" <tag:SnakeLabel> => RawType::Tagged{tag, type_:Box::new(type_)},
+    SnakeLabel => RawType::Variable(<>),
+    CamelPath => RawType::DataType{path:<>, args:vec![]},
+}
+
+RawType1 : RawType = {
+    <froms:TypeList> "->" <to:Type> => RawType::Function{froms, to:Box::new(to)},
+    <args:(Type)+> <path:CamelPath> => RawType::DataType{path, args},
+    RawType,
 }
 
 TypeList : TypeList = {UnorderedTypeList, OrderedTypeList}
