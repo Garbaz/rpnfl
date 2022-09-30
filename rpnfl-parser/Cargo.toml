@@ -2,6 +2,12 @@
 name = "rpnfl-parser"
 version = "0.1.0"
 edition = "2021"
+authors = ["Garbaz"]
+description = "A parser for RPNFL"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/Garbaz/rpnfl"
+repository = "https://github.com/Garbaz/rpnfl"
 
 [build-dependencies]
 lalrpop = "0.19.8"

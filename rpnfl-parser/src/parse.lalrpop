@@ -3,24 +3,28 @@ use rpnfl_parser::ast::*;
 grammar;
 
 pub Expr : Expr = {
-    "(" <Expr+> ")" => Expr::SubExpressions(<>),
-    "{" <Expr+> "}" => Expr::EscExpressions(<>),
-    Path => Expr::Reference(<>),
-    "=" <SnakeLabel> => Expr::Assign(<>),
-    "'" <SnakeLabel> => Expr::Tag(<>),
+    <l:@L> <raw_expr:RawExpr> <r:@R> => Expr::new(l, r, raw_expr),
+}
+
+pub RawExpr : RawExpr = {
+    "(" <Expr+> ")" => RawExpr::SubExpressions(<>),
+    "{" <Expr+> "}" => RawExpr::EscExpressions(<>),
+    Path => RawExpr::Reference(<>),
+    "=" <SnakeLabel> => RawExpr::Assign(<>),
+    "'" <SnakeLabel> => RawExpr::Tag(<>),
     "\\" <froms:TypeList> "->" <to:Type> ":" <name:SnakeLabel> <body:Expr> =>
-        Expr::DefFunction{name, froms, to, body:Box::new(body)},
+        RawExpr::DefFunction{name, froms, to, body:Box::new(body)},
     "\\" <froms:TypeList> ":" <name:CamelLabel> =>
-        Expr::DefConstructor{name, froms},
+        RawExpr::DefConstructor{name, froms},
     "#" <name:CamelLabel> <body:Expr> =>
-        Expr::DefModule{
+        RawExpr::DefModule{
             name,
             froms:TypeList{ordered:false, types:vec![]},
             body:Box::new(body)
         },
     // "#" <froms:TypeList> ":" <name:CamelLabel> <body:Expr> =>
-    //     Expr::DefModule{name, froms, body},
-    "|" <pattern:Pattern> "=>" <body:Expr> => Expr::Destructor{pattern, body:Box::new(body)},
+    //     RawExpr::DefModule{name, froms, body},
+    "|" <pattern:Pattern1> "=>" <body:Expr> => RawExpr::Destructor{pattern, body:Box::new(body)},
 }
 
 pub Type : Type = {
@@ -113,13 +117,13 @@ SeperatedF<SEP,INIT,LAST> : Vec<LAST> = {
 }
 
 // pub Expr : Box<Expr> = {
-//     "hello" => Box::new(Expr::)
+//     "hello" => Box::new(RawExpr::)
 // }
 
 // Expr1 : Box<Expr> = {
-//     "{" <Expr> "}" => Box::new(Expr::Abstraction(<>)),
-//     "$" <Num> => Box::new(Expr::Argument(<>.parse().unwrap())),
-//     "%" <Num> => Box::new(Expr::Recursion(<>.parse().unwrap())),
+//     "{" <Expr> "}" => Box::new(RawExpr::Abstraction(<>)),
+//     "$" <Num> => Box::new(RawExpr::Argument(<>.parse().unwrap())),
+//     "%" <Num> => Box::new(RawExpr::Recursion(<>.parse().unwrap())),
 //     // Expr2,
 //     "(" <Expr> ")",
 // }

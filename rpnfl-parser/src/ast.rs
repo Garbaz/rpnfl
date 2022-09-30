@@ -9,12 +9,37 @@
 //     pub name : String,
 //     pub parent : &'a Object<'a>,
 // }
+use std::fmt::Debug;
 
 #[derive(Debug, Clone)]
-pub struct Path(pub Vec<String>);
+pub struct Expr {
+    pub location: (usize, usize),
+    pub raw_expr: RawExpr,
+}
+
+impl Expr {
+    pub fn new(l: usize, r: usize, raw_expr: RawExpr) -> Self {
+        Self {
+            location: (l, r),
+            raw_expr,
+        }
+    }
+}
+
+// impl Debug for Expr {
+//     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(fmt, "Expr {{\n{:?}\n}}", self.raw_expr)
+//     }
+// }
+
+// impl Display for Expr {
+//     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(fmt, "{:#?}", self.raw_expr)
+//     }
+// }
 
 #[derive(Debug, Clone)]
-pub enum Expr {
+pub enum RawExpr {
     SubExpressions(Vec<Expr>),
     EscExpressions(Vec<Expr>),
     Reference(Path),
@@ -46,9 +71,12 @@ pub enum Expr {
     },
     Collection(ExprList),
     Numeral(Numeral),
-    Bespoke(Box<Bespoke>),
+    // Bespoke(Box<Bespoke>),
     Import(Path),
 }
+
+#[derive(Debug, Clone)]
+pub struct Path(pub Vec<String>);
 
 #[derive(Debug, Clone)]
 pub struct ExprList {
@@ -84,14 +112,14 @@ pub enum Numeral {
     Float(f64),
 }
 
-#[derive(Debug, Clone)]
-pub enum Bespoke {
-    Add(Expr, Expr),
-    Sub(Expr, Expr),
-    Mul(Expr, Expr),
-    Div(Expr, Expr),
-    Neg(Expr),
-    And(Expr, Expr),
-    Or(Expr, Expr),
-    Not(Expr, Expr),
-}
+// #[derive(Debug, Clone)]
+// pub enum Bespoke {
+//     Add(Expr, Expr),
+//     Sub(Expr, Expr),
+//     Mul(Expr, Expr),
+//     Div(Expr, Expr),
+//     Neg(Expr),
+//     And(Expr, Expr),
+//     Or(Expr, Expr),
+//     Not(Expr, Expr),
+// }

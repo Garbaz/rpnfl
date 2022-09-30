@@ -7,6 +7,8 @@ extern crate lalrpop_util;
 
 lalrpop_mod!(pub parse);
 
+// static mut PRINT_AST_WITHOUT_LOCATIONS: bool = false;
+
 struct InputHistory(VecDeque<String>);
 
 impl History<String> for InputHistory {
@@ -19,14 +21,12 @@ impl History<String> for InputHistory {
     }
 }
 
-// fn printhelp() {
-//     println!("  Commands:");
-//     println!("    ast - Enable/[Disable] prettyprinting AST.");
-//     println!("    trace - [Enable]/Disable printing the evaluation trace.");
-//     println!("    stack - Enable/[Disable] printing the stack in the evaluation trace.");
-//     println!();
-//     println!("  Otherwise, simply enter any valid expression to be evaluated.");
-// }
+fn printhelp() {
+    println!("  Commands:");
+    println!("    :r FILE  -- Read and parse the file FILE.");
+    println!();
+    println!("  Otherwise, simply enter any valid expression to be evaluated.");
+}
 
 // fn abled(b: bool) -> String {
 //     (if b { "enabled" } else { "disabled" }).to_string()
@@ -54,7 +54,7 @@ fn interactive() -> ! {
     // let mut prettyprint = true;
     let mut input_hist = InputHistory(VecDeque::new());
 
-    // printhelp();
+    printhelp();
 
     loop {
         let line: String = Input::with_theme(&ColorfulTheme::default())
@@ -65,23 +65,31 @@ fn interactive() -> ! {
 
         // println!("{}", line);
 
-        if let "::" = &line[..2] {
-            let mut cmd = (&line[2..]).split_whitespace();
-            if let Some("l") = cmd.next() {
-                if let Some(f) = cmd.next() {
-                    if let Ok(src) = fs::read_to_string(f) {
-                        parse_and_print(&src);
+        if let ":" = &line[..1] {
+            let mut cmd = (&line[1..]).split_whitespace();
+            match cmd.next() {
+                Some("r") => {
+                    if let Some(f) = cmd.next() {
+                        if let Ok(src) = fs::read_to_string(f) {
+                            parse_and_print(&src);
+                        } else {
+                            println!(
+                                "REPL Err: I could not read the file \"{}\"",
+                                f
+                            );
+                        }
                     } else {
-                        println!(
-                            "REPL Err: I could not read the file \"{}\"",
-                            f
-                        );
+                        println!("REPL Err: I need a filename to open.");
                     }
-                } else {
-                    println!("REPL Err: I need a filename to open.");
                 }
-            } else {
-                println!("REPL Err: I don't know this command.");
+                // Some("l") => unsafe {
+                //     PRINT_AST_WITHOUT_LOCATIONS = !PRINT_AST_WITHOUT_LOCATIONS;
+                //     println!(
+                //         "REPL Info: Printing AST without locations is now {}.",
+                //         abled(PRINT_AST_WITHOUT_LOCATIONS)
+                //     )
+                // },
+                _ => println!("REPL Err: I don't know this command."),
             }
         } else {
             parse_and_print(&line);
