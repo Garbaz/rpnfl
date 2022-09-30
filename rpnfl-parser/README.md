@@ -40,7 +40,7 @@ Type ::= "(" Type ")"
        | {Type} ModuleRefr
 Types ::= UnorderedTypes | OrderedTypes
 UnorderedTypes ::= Type | Type "," UnorderedTypes
-OrderedTypes   ::= Type | Type ";" OrderedTypes
+OrderedTypes   ::= Type ";" | Type ";" OrderedTypes
 
 Refr ::= FuncRefr | ConstrRefr
 FuncRefr   ::= Path FuncName
@@ -74,4 +74,5 @@ Bespoke ::= Expr "+" Expr
 ## TODO/Notes
 
 - Parsing modules with arguments makes Lalrpop cry. What's the problem there? It doesn't seem to be the fact that the body is just tacked on without any separator?
-- Update Grammar here to reflect what I have changed/actually implemented in Lalrpop
+- Implement Bespoke in Lalrpop at some point
+- What about "functions" that are constant (e.g. Should we allow `\Int:x {5}`? This could also simply be `5 =x`)
