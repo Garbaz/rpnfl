@@ -729,6 +729,7 @@ This might be utilizable for optimization (you don't need to compile a code path
 
 另: Can we generalize to "A type is either a constructor, or a set of types"? (What for though?)
 
+
 ## Differentiate ordered / unordered by brackets
 
 Code is an ordered collection of functions. A module is an unordered collection of functions. Should they be differentiated by brackets? However, which? `{}` are cool for either, but neither `()` nor `[]` really look great if opened over an entire block like `{}`...
@@ -745,6 +746,7 @@ eq = \Int; Int -> Bool
 In a syntax like `Int'x -> Int , Bool : f`, the function name being at the end might not be great for general usability. When we are in search of a specific function by name, it is visually difficult to always have to find the end of each function signature. And it just semantically is generally the case that if we define a named function, it is the function name that we have in mind as it's primary identifier.
 
 反: This however does break analogy to the application of a function, e.g. `\eq : Int, Int -> Bool` is applied like `0 1 eq`.
+
 
 ## Considerations about constructors/variants
 
@@ -818,9 +820,11 @@ Another consideration would be the option to extend a type locally. E.g. impleme
 }
 ```
 
+
 ## Marking symmetric functions
 
 There are many function which are symmetric, like `\Float , Float -> Float : add {}` or `\a , a -> Bool : eq {}`. However, unaware of the symmetry, these will be considered ambiguous if defined with unordered arguments. Therefore, we would either define them as ordered or with differently named arguments. However, both of these options are somewhat antithetical to them being symmetric. Therefore, it might be of interest to introduce either an option to mark a function as symmetric, which in essence simply causes the compiler to choose one arbitrary order to the arguments in application, or introduce actually an option to proof the symmetry of the function on a meta level to ensure that we are not erroneously deeming functions as symmetric when in fact they are not.
+
 
 ## Ordered arguments
 
@@ -837,6 +841,7 @@ Are ordered arguments in the first place a good idea? Would it make sense for th
 ```
 
 or something less crazy.
+
 
 ## Meta-data for data
 
@@ -873,6 +878,7 @@ This would mean that we can treat the result as if it simply were an `Int`, but 
 
 观: More generally, we want to be able to have multiple perspectives on the same data such that we don't have to be overly verbose in working with it. This includes namespaces (the data of all declared variables) & named arguments for functions / constructors, but could just as well be expanded arbitrarily. The idea hereby being that, just as we work with abstract concepts in our mind, we can write programs where we only consider the parts of our data that we care about at this moment, without having to consider the entire extend of details our data contains. We should be able to specify and carry the details through our program, but have them for our own syntactic understanding separated from the major parts we care about.
 
+
 ## Type Tag as data wrapper
 
 The purpose of type tags is to differentiate types such that the type signature of an unordered function is unambiguous. In essence however, a type tag is not really different from a wrapper type (i.e. a constructor of a single polymorphic argument). E.g.:
@@ -898,13 +904,16 @@ This way, a type tag can be considered simply a special kind of constructor that
 - has special syntax for constructing (e.g.`0'w`)
 - is automatically destructed and it's contents assigned to a variable inside the function
 
+
 ## Functions as incomplete data
 
 Instead of looking at a function as transforming data, we can also consider it as a piece of data that has yet to be fully determined
 
+
 ## Implicit arguments and secondary scope
 
 In a language like Agda there are implicit arguments which for most situation do not have to be accessed. But if we do, it's always a bit of a chase to get to them. And more generally, we might want to have values present but not cluttering up the main scope. Therefore, instead of having things completely out of scope that then have to be brought into scope, we could have a "secondary" scope which simply is differentiated by being somewhat less direct to access, e.g. requiring a prefix or something like that. This also goes with the "Meta-data" idea above. 
+
 
 ## Alternative approach to syntax of application
 
@@ -916,6 +925,7 @@ E.g. `{inc} map concat` is okay, because `concat:a List->a`, `map:a List->(a->b)
 
 Is this in the end the same as I have proposed so far? Or does this differ in some way? Which is more intuitive?
 
+
 ## Reconsidering paths
 
 As it stands, I am defining paths to be right branching like everything else in the language. There are two things that speak against this:
@@ -926,6 +936,7 @@ As it stands, I am defining paths to be right branching like everything else in 
 
 想: Autocomplete in programming is the same as predicting ahead in language comprehension. We want for the context to most narrow what could come next.
 
+
 ## Patterns
 
 The simplest kind of deconstruction pattern is to simply write out a constructor, with the components assigned to variables.
@@ -934,7 +945,7 @@ The simplest kind of deconstruction pattern is to simply write out a constructor
 v | x y z C => (...x...y...z...)
 ```
 
-For this to be executed, we have to simply check that `x` is a `C` construct and unravel it. If `x` is of type `C`, this can be directly ensured at compile time. However, if `x` is of a module type `M` containing `C`, information has to be retained at runtime with which constructor in `M` `x` has been constructed with.
+For this to be executed, we have to simply check that `v` is a `C` construct and unravel it. If `v` is of type `C`, this can be directly ensured at compile time. However, if `v` is of a module type `M` containing `C`, information has to be retained at runtime with which constructor in `M` `v` has been constructed with.
 
 For more complex hierarchical patterns, this process simply has to be repeated recursively. If e.g. `x` is not a variable, but `p q D`:
 
@@ -947,6 +958,7 @@ Then this can be treated as/reformed into:
 ```
 v | x y z C => (x | p q D => (...p...q...y...z...))
 ```
+
 
 ## Unordered Constructors
 
@@ -967,3 +979,153 @@ _Option 2:_ Instead of having `_` to ignore arguments, we do allow for construct
 When we define an unordered function or constructor, what matters is that the it's arguments could under no circumstances take the same value. I.e. For a function of type `A , B -> C`, there can not exist a type `T` such that `T <: A` and `T <: B`, or in other words, if we have any possible type in the language, we have to be able to exclusively decide whether it fits `A`, it fits `B`, or it fits neither.
 
 However, when we want to destruct an unordered constructor in an unordered fashion, what matters instead is that it's components could under no circumstance be used the same. I.e. For a constructor of type `A, B`, there can not exist a type `T` such that `A <: T` and `B <: T`, so that we can infer uniquely from the usage of the variable the component was assigned to which component of the constructor it was. Though it is unclear whether we can always infer the right type even if this is not the case (Does Hindley–Milner cover this?).
+
+
+## Destructors & Data Flow
+
+Returning to one of the primary motivations for this language, for the structure of a program's code to represent the flow of it's data with it's structure in an intuitive way, the syntax for the deconstructor should perhaps be reconsidered or extended. Also, the idea about allowing a function to have multiple results might also not be such a bad idea.
+
+To note is that the deconstructor really has two different modes of operation: Checking whether the given data fits a certain pattern, and deconstructing the data in accordance to that pattern. However, the first mode is only needed for enum data, i.e. if the given data can be one of multiple constructors at runtime. Otherwise, the deconstructor really only serves to disassemble, which requires no branching.
+
+A possible new deconstructor pattern could be: `|PATTERN|` with the pattern allowing for three kinds of holes: `_` ("ignore") to drop a certain part of the data, `%` ("pass"; Maybe `#`?) for the part to become a new floating value, and `[:snake_label:]` ("variable") to assign the part to a label.
+
+How we cleanly do branching however, I'm still not sure. Something like this would be pretty:
+
+```
+| x _ _ A | x
+|   p q B | p + q
+|       C | 1729
+```
+
+However, how precedence and nesting is handled with this, I'm not sure. Maybe:
+
+```
+| x _ _ A | x     ;
+|   p q B | p + q ;
+|       C | 1729  ;
+```
+
+
+## Concerning Records, Variants, Symbols and Enums
+
+At it's core, what we mean with a "data type" is to give a name to a given form of packaging data. This is what we call a "struct" or "record".\
+However, it is often times convenient to extend this definition of a type to allow not just for a type name to refer to a single form of packaging data, but also for a type to stand for one of multiple forms. This is what we call a "variant" or "sum type" or "union".\
+Also, we sometimes want a static symbol in our language without any further data attached to it. This is what we call a "symbol".\
+Just like with variants, we can also allow for a type name to stand for one of multiple symbols. This is what we call an "enum".
+
+Ultimately, these four concepts are captured by two features:
+
+A _constructor_ is a named data form (->product). It can represent a record:
+
+```
+\Float ; Float : Vec2
+```
+
+Or it can represent a symbol (->unit):
+
+```
+\Tag
+```
+
+A _module_ (name TBD) is a named collection of types (->sum). It can represent a variant:
+
+```
+\\Tree {
+    \Leaf
+    \Tree ; Tree : Node
+}
+```
+
+Or it can represent an enum:
+
+```
+\\Color {
+    \Red
+    \Orange
+    \Yellow
+    \Green
+    \Blue
+    \Purple
+}
+```
+
+However, a module can not only contain constructors, but also functions, and importantly, also further modules ("submodules").
+
+```
+\\Collection {
+    \\v List {
+        \Empty
+        \v ; v List : Ext
+    }
+    \\k v Map {
+        \Empty
+        \k ; v ; v Map : Ext
+        
+        \(k;v) List -> k v Map : fromList {...}
+    }
+    \\v Set {
+        \Empty
+        \v ; v Set : Ext
+
+        \v List -> v Set : fromList {...}
+    }
+}
+```
+
+Both records and modules are entirely equivalent on the type level. However, when it comes to deconstructing them, their behaviour differs:
+
+A constructor can simply be deconstructed into it's components:
+
+```
+\Vec2 -> Float : x {
+    | x y Vec2 | x
+}
+```
+
+A module however instead deconstructs into one of multiple types:
+
+```
+\Color -> Int : hex {
+    | Red    | 0xE50000
+    | Orange | 0xFF8D00
+    | Yellow | 0xFFEE00
+    | Green  | 0x028121
+    | Blue   | 0x004CFF
+    | Purple | 0x770088
+}
+```
+
+```
+\Collection -> Boolean : isEmpty {
+    | List.Empty | True
+    |  Map.Empty | True
+    |  Set.Empty | True
+    |          _ | False
+}
+```
+
+问: How does this interact with polymorphism however? E.g.:
+
+```
+\Collection -> ??? List : toList {
+    ???
+}
+``` 
+
+
+## Reconsidering syntax for ordered/unordered listings
+
+So far I have considered `,` for unordered listings and `;` for ordered listings. It might be preferable to reverse these. Or alternatively, use `.` instead of `;` for one of the two. The primary reason for this suggestion is that `;` simply looks quite ugly.
+
+议: Ordered listings are written with `,`. Unordered listings are written with `.`.
+
+因: `,` is not symmetric, suggesting that there is something essentially different between it's left and right side, i.e. the presence of horizontal order. `.` is symmetric, suggesting the left and right side are equivalent, i.e. the absence of horizontal order.
+
+例:
+
+```
+\Float , Float : Vec2
+\String . Vec2 : Location
+```
+
+问: However, what syntax would we then use for paths?
