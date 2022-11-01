@@ -133,3 +133,20 @@ Or maybe enum types instead?
 How do we handle name spaces?
 
 <hr>
+
+```
+\Plant {
+    \Stem, Flower, Leaf : Blume {
+        \Float'length, Float'width : Stem
+        \Center, Petals : Flower {
+            \Color : Center
+            \Shape, Color : Petal
+        }
+        \Shape, Color : Leaf {
+            ...
+        }
+    }
+
+    \Trunk, Crown : Tree
+}
+```

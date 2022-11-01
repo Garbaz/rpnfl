@@ -1129,3 +1129,15 @@ So far I have considered `,` for unordered listings and `;` for ordered listings
 ```
 
 问: However, what syntax would we then use for paths?
+
+## Notationally concise and informationally verbose
+
+Languages like Lisp are very notationally concise, meaning that the representation of the program's core structure takes up little space in it's syntax. However Lisp also is informationally concise, it doesn't tell you much about the meaning of a program without you having to parse and interpret the code.
+
+A language like Haskell on the other hand is (in places) notationally verbose with it's annotations and keywords, however, Haskell also is informationally verbose. You can read what a Haskell program does without having to parse and interpret the code inside it's functions, you just have to look at the type annotation.
+
+A goal with this language is be notationally concise, while also being informationally verbose.
+
+## Probprog
+
+Under the hypothesis that probabilistic programming is a good approach to producing useful programs, probprog should be an intrinsic part of this language. What this looks like however, I'm not entirely certain about. If we want to be able to support approaches like MCMC, this would have to be included in the implementation structure of the language itself (and maybe in the syntax in some way as well?). Under the additional hypothesis of "rejection sampling is all you need", we also would have to include some way for distributions to be hooked into from the outside for bias learning.
