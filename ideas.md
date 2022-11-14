@@ -1141,3 +1141,9 @@ A goal with this language is be notationally concise, while also being informati
 ## Probprog
 
 Under the hypothesis that probabilistic programming is a good approach to producing useful programs, probprog should be an intrinsic part of this language. What this looks like however, I'm not entirely certain about. If we want to be able to support approaches like MCMC, this would have to be included in the implementation structure of the language itself (and maybe in the syntax in some way as well?). Under the additional hypothesis of "rejection sampling is all you need", we also would have to include some way for distributions to be hooked into from the outside for bias learning.
+
+For a type `A`, we should be able to write something like `?A`, which will uniformly (by some choice of the meaning of "uniform") sample a possible value of type `A`.
+
+Additionally, a mechanism should exist to bias this choice. For example, we should be able to bias the choice of a `Float` such that we get samples in accordance to a normal distribution. That is not to say that "the normal distribution" is a primitive of our language, rather a general mechanism should exist to bias a sample in any arbitrary way.
+
+The most straightforward of course is to define a distribution as simply an ordinary function, requiring no additional primitive beside the `?` operator.
