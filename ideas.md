@@ -1142,8 +1142,22 @@ A goal with this language is be notationally concise, while also being informati
 
 Under the hypothesis that probabilistic programming is a good approach to producing useful programs, probprog should be an intrinsic part of this language. What this looks like however, I'm not entirely certain about. If we want to be able to support approaches like MCMC, this would have to be included in the implementation structure of the language itself (and maybe in the syntax in some way as well?). Under the additional hypothesis of "rejection sampling is all you need", we also would have to include some way for distributions to be hooked into from the outside for bias learning.
 
-For a type `A`, we should be able to write something like `?A`, which will uniformly (by some choice of the meaning of "uniform") sample a possible value of type `A`.
+For any type `A`, instead of providing a explicit value, we should be able to write something like `?`, which will uniformly (by some choice of the meaning of "uniform") sample a possible value of type `A`.
 
 Additionally, a mechanism should exist to bias this choice. For example, we should be able to bias the choice of a `Float` such that we get samples in accordance to a normal distribution. That is not to say that "the normal distribution" is a primitive of our language, rather a general mechanism should exist to bias a sample in any arbitrary way.
 
-The most straightforward of course is to define a distribution as simply an ordinary function, requiring no additional primitive beside the `?` operator.
+The most straightforward of course is to define a distribution as simply an ordinary function utilizing `?`, requiring no additional primitive beside the `?` operator.
+
+## Probprog 2
+
+Functions have two kinds of arguments, and these arguments have two possible states.
+
+The first kind of argument is a "user argument", it is to be provided by the user that uses the function.\
+The second kind of argument is an "oracle argument", it is to be provided by the probabilistic machinery of the computer, the oracle. 
+
+Both user arguments and oracle arguments are either "undetermined" or "determined". A user argument is determined by the user specifying a value (either as a constant or as the result of further computation); An oracle argument is determined by the oracle according to some probabilistic process (uniform choice of possible values, a learned distribution, etc.).
+
+With each determined argument, a function can be reduced, and a function with no undetermined arguments remaining is a "constant".\
+A function with undetermined oracle arguments is "non-deterministic".
+
+A function can principally both be curried by a user argument or an oracle argument.

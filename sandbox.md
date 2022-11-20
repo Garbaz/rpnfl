@@ -150,3 +150,17 @@ How do we handle name spaces?
     \Trunk, Crown : Tree
 }
 ```
+
+<hr>
+
+```
+\Tree {
+    \(Branch List)'sub : Branch
+    \End
+
+    \tree {
+        ? | 0 | End
+          | n | ({tree} n'times repeat) Branch
+    }
+}
+```
