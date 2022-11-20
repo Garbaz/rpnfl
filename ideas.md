@@ -1,5 +1,7 @@
 # Ideas
 
+This is a chronological collection of ideas I had/have about the language. That means that earlier ideas are potentially obsolete or have been reconsidered with later ideas.
+
 (耳192, )
 
 
