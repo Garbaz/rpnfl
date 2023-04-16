@@ -164,3 +164,20 @@ How do we handle name spaces?
     }
 }
 ```
+
+<hr>
+
+```
+\Bool {
+    \True
+    \False
+}
+
+{
+    ? = Bool : a
+    ? = Bool : b
+    a && b
+} = ___ : c
+
+    ^??
+```

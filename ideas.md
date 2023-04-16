@@ -1163,3 +1163,32 @@ With each determined argument, a function can be reduced, and a function with no
 A function with undetermined oracle arguments is "non-deterministic".
 
 A function can principally both be curried by a user argument or an oracle argument.
+
+## Uniquely inferable untagged union
+
+When defining a sum type (aka. tagged unions), one sometimes has a situation as such:
+
+```rust
+//rust
+struct A(...);
+struct B(...);
+enum C {
+    A(A),
+    B(B),
+}
+```
+
+Semantically, an untagged union would be sufficient here. So, just like with untagged unordered function arguments, we could allow for untagged union types. Something like:
+
+```
+#C {
+    \... : A
+    \... : B
+}
+```
+
+## Files are variables
+
+A file containing a bunch of code is the same as if that code was written in some block which then is then assigned to that variable name, with the only difference being that to access the namespace of file "variables", we prefix their name. How do we handle paths?
+
+One idea for this would also be that e.g. a block `x := {...}` can either be evaluated `y := x`, or "opened" `y := #x` (syntax tbd). In the second case, the assignments that are made in the block are exported, and either dumped into the current namespace, `#x`, or attached to a new sub-namespace `y := #x`.
